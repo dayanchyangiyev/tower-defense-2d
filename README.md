@@ -83,49 +83,7 @@ Obiectivul tău este să supraviețuiești fiecărui val de atacatori. Pe măsur
 
 Proiectul este configurat cu CMake.
 
-Instrucțiuni pentru terminal:
 
-1. Pasul de configurare
-```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
-# sau ./scripts/cmake.sh configure
-```
-
-Sau pe Windows cu GCC folosind Git Bash:
-```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -G Ninja
-# sau ./scripts/cmake.sh configure -g Ninja
-```
-
-Pentru a configura cu ASan, avem opțiunea `-DUSE_ASAN=ON` (nu merge pe Windows cu GCC):
-```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DUSE_ASAN=ON
-# sau ./scripts/cmake.sh configure -e "-DUSE_ASAN=ON"
-```
-
-
-La acest pas putem cere să generăm fișiere de proiect pentru diverse medii de lucru.
-
-
-2. Pasul de compilare
-```sh
-cmake --build build --config Debug --parallel 6
-# sau ./scripts/cmake.sh build
-```
-
-Cu opțiunea `parallel` specificăm numărul de fișiere compilate în paralel.
-
-
-3. Pasul de instalare (opțional)
-```sh
-cmake --install build --config Debug --prefix install_dir
-# sau ./scripts/cmake.sh install
-```
-
-Vezi și [`scripts/cmake.sh`](scripts/cmake.sh).
-
-Observație: folderele `build/` și `install_dir/` sunt adăugate în fișierul `.gitignore` deoarece
-conțin fișiere generate și nu ne ajută să le versionăm.
 
 
 ## Instrucțiuni pentru a rula executabilul
