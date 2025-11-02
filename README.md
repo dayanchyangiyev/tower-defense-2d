@@ -1,30 +1,15 @@
-# Nu primesc notă pentru că nu am pus titlu și descriere
+# Tower Defense 2D
 
-### Folosiți template-ul corespunzător grupei voastre!
 
-| Laborant  | Link template                                |
-|-----------|----------------------------------------------|
-| Dragoș B  | https://github.com/Ionnier/oop-template      |
-| Tiberiu M | https://github.com/MaximTiberiu/oop-template |
-| Marius MC | https://github.com/mcmarius/oop-template     |
+### Descriere
 
-### Important!
+Bun venit la 2D Tower Defense! Acesta este un joc clasic de strategie în care obiectivul tău principal este să îți protejezi baza de inamicii invadatori. Te vei confrunta cu o armată necruțătoare, iar inteligența și planificarea ta sunt tot ce stă între fortăreața ta și distrugerea totală.
 
-Aveți voie cu cod generat de modele de limbaj la care nu ați contribuit semnificativ doar dacă documentați riguros acest proces.
-Codul generat pus "ca să fie"/pe care nu îl înțelegeți se punctează doar pentru puncte bonus, doar în contextul
-în care oferă funcționalități ajutătoare și doar dacă are sens.
+Jocul se desfășoară pe o hartă 2D care prezintă o cale prestabilită. Hoarde de inamici vor apărea în valuri și vor urmări automat această cale, încercând să ajungă la baza ta aflată la celălalt capăt. Pentru a-i opri, trebuie să plasezi strategic o varietate de turnuri automate pe zonele desemnate pentru construcție de-a lungul căii. Aceste turnuri vor detecta și ataca automat orice inamic care intră în raza lor de acțiune.
 
-Codul din proiect trebuie să poată fi ușor de înțeles și de modificat de către altcineva. Pentru detalii, veniți la ore.
+Strategia este cheia. Fiecare inamic pe care îl învingi te recompensează cu bani, care reprezintă resursa principală a jocului. Trebuie să folosești acești bani cu înțelepciune pentru a construi turnuri noi sau pentru a le îmbunătăți pe cele existente. Diferite turnuri au puncte forte unice - unele atacă rapid, altele provoacă daune masive unei singure ținte, iar altele pot încetini inamicii. A decide ce să construiești și unde să construiești este provocarea principală. O plasare bună poate crea "zone de foc" unde mai multe turnuri pot ataca aceiași inamici, maximizând daunele.
 
-O cerință nu se consideră îndeplinită dacă este realizată doar prin cod generat.
-
-- **Fără cod de umplutură/fără sens!**
-- **Fără copy-paste!**
-- **Fără variabile globale!**
-- **Fără atribute publice!**
-- **Pentru T2 și T3, fără date în cod!** Datele vor fi citite din fișier, aveți exemple destule.
-- **Obligatoriu** fișiere cu date mai multe din care să citiți, obligatoriu cu biblioteci externe: fișiere (local sau server) sau baze de date
-- obligatoriu (TBD) să integrați cel puțin două biblioteci externe pe lângă cele pentru stocare
+Obiectivul tău este să supraviețuiești fiecărui val de atacatori. Pe măsură ce progresezi, valurile vor deveni mai mari și vor include tipuri de inamici mai puternici, mai rapizi și mai rezistenți. Va trebui să îți adaptezi strategia, să investești în îmbunătățiri puternice și să îți gestionezi economia pentru a contracara amenințarea tot mai mare. Dacă poți rezista asaltului final și îți poți menține baza în picioare, câștigi jocul!
 
 ### Tema 0
 
@@ -98,44 +83,13 @@ O cerință nu se consideră îndeplinită dacă este realizată doar prin cod g
 
 Proiectul este configurat cu CMake.
 
-Instrucțiuni pentru terminal:
-
-1. Pasul de configurare
-```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
-# sau ./scripts/cmake.sh configure
-```
-
-Sau pe Windows cu GCC folosind Git Bash:
-```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -G Ninja
-# sau ./scripts/cmake.sh configure -g Ninja
-```
-
-La acest pas putem cere să generăm fișiere de proiect pentru diverse medii de lucru.
 
 
-2. Pasul de compilare
-```sh
-cmake --build build --config Debug --parallel 6
-# sau ./scripts/cmake.sh build
-```
 
-Cu opțiunea `parallel` specificăm numărul de fișiere compilate în paralel.
+## Instrucțiuni pentru a rula executabilul
 
-
-3. Pasul de instalare (opțional)
-```sh
-cmake --install build --config Debug --prefix install_dir
-# sau ./scripts/cmake.sh install
-```
-
-Vezi și [`scripts/cmake.sh`](scripts/cmake.sh).
-
-Observație: folderele `build/` și `install_dir/` sunt adăugate în fișierul `.gitignore` deoarece
-conțin fișiere generate și nu ne ajută să le versionăm.
 
 
 ## Resurse
 
-- adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
+
