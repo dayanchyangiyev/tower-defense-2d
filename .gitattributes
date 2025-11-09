@@ -1,1 +1,52 @@
-ext/** linguist-vendored
+## Text files 
+# Normalize line endings to LF across platforms.
+* text=auto eol=lf
+
+# C/C++ sources and headers.
+*.c      text eol=lf
+*.cc     text eol=lf
+*.cpp    text eol=lf
+*.cxx    text eol=lf
+*.h      text eol=lf
+*.hh     text eol=lf
+*.hpp    text eol=lf
+*.inl    text eol=lf
+
+# Build scripts & configs.
+*.cmake       text eol=lf
+CMakeLists.txt text eol=lf
+*.sh          text eol=lf
+*.command     text eol=lf
+*.props       text eol=lf
+*.yml         text eol=lf
+*.yaml        text eol=lf
+*.md          text eol=lf
+*.txt         text eol=lf
+
+## Binary/prebuilt artefacts
+*.a         binary
+*.lib       binary
+*.dll       binary
+*.dylib     binary
+*.so        binary
+*.metallib  binary
+*.framework/** binary
+*.dSYM/**   binary
+*.dmg       binary
+
+## Art assets
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.bmp  binary
+*.psd  binary
+*.ico  binary
+*.ttf  binary
+*.otf  binary
+*.wav  binary
+*.mp3  binary
+*.ogg  binary
+
+## GitHub linguist tweaks
+# Hide vendored/compiled libraries from GitHub language stats.
+lib/** linguist-vendored
