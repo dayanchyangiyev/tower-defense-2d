@@ -22,7 +22,7 @@ on:
 env:
   BUILD_TYPE: ${{ inputs.build_type || 'Debug' }}
   # NOTE: update executable name if it is changed in CMakeLists.txt
-  EXECUTABLE_NAME: "simple_game"
+  EXECUTABLE_NAME: "tower-defense-2d"
   INPUT_FILENAME: "tastatura.txt"
   BIN_DIR: "bin"       # update in cmake/Options.cmake:6 if changing name here
   BUILD_DIR: "build"
@@ -231,6 +231,11 @@ jobs:
           shopt -s dotglob
           mv artifacts/${{ env.BIN_DIR }}/* ${{ env.ZIP_NAME }}
           ls -la ${{ env.ZIP_NAME }}
+
+      - name: Add macOS launcher
+        if: runner.os == 'macOS'
+        run: |
+          cp launcher.command "${{ env.ZIP_NAME }}/launcher.command"
 
       - name: Process artifacts
         uses: ./.github/actions/process-artifacts
