@@ -2,35 +2,33 @@ include_guard(GLOBAL)
 
 function(setup_sdl_dependencies target_name)
     if(APPLE)
-        set(SDL_FRAMEWORK_ROOT "${CMAKE_SOURCE_DIR}/lib/SDL3" CACHE PATH "Location of bundled SDL3 frameworks")
+        set(_sdl_root "${CMAKE_SOURCE_DIR}/lib/SDL3")
+        set(_sdl_config_dir "${CMAKE_SOURCE_DIR}/cmake")
 
-        find_library(SDL3_FRAMEWORK SDL3
-            REQUIRED
-            PATHS "${SDL_FRAMEWORK_ROOT}"
-            NO_DEFAULT_PATH
-        )
-        find_library(SDL3_IMAGE_FRAMEWORK SDL3_image
-            REQUIRED
-            PATHS "${SDL_FRAMEWORK_ROOT}"
-            NO_DEFAULT_PATH
-        )
+        if(EXISTS "${_sdl_root}/SDL3.framework/SDL3")
+            if(NOT DEFINED SDL3_ROOT_DIR)
+                set(SDL3_ROOT_DIR "${_sdl_root}" CACHE PATH "Location of bundled SDL3.framework" FORCE)
+            endif()
+            if(NOT DEFINED SDL3_DIR)
+                set(SDL3_DIR "${_sdl_config_dir}" CACHE PATH "Location of SDL3Config.cmake" FORCE)
+            endif()
+        endif()
 
-        target_include_directories(${target_name} PRIVATE
-            "${SDL3_FRAMEWORK}/Headers"
-            "${SDL3_IMAGE_FRAMEWORK}/Headers"
-        )
-
-        target_link_libraries(${target_name} PRIVATE
-            "${SDL3_FRAMEWORK}"
-            "${SDL3_IMAGE_FRAMEWORK}"
-        )
-    else()
-        find_package(SDL3 CONFIG REQUIRED)
-        find_package(SDL3_image CONFIG REQUIRED)
-
-        target_link_libraries(${target_name} PRIVATE
-            SDL3::SDL3
-            SDL3_image::SDL3_image
-        )
+        if(EXISTS "${_sdl_root}/SDL3_image.framework/SDL3_image")
+            if(NOT DEFINED SDL3_IMAGE_ROOT_DIR)
+                set(SDL3_IMAGE_ROOT_DIR "${_sdl_root}" CACHE PATH "Location of bundled SDL3_image.framework" FORCE)
+            endif()
+            if(NOT DEFINED SDL3_image_DIR)
+                set(SDL3_image_DIR "${_sdl_config_dir}" CACHE PATH "Location of SDL3_imageConfig.cmake" FORCE)
+            endif()
+        endif()
     endif()
+
+    find_package(SDL3 CONFIG REQUIRED)
+    find_package(SDL3_image CONFIG REQUIRED)
+
+    target_link_libraries(${target_name} PRIVATE
+        SDL3::SDL3
+        SDL3_image::SDL3_image
+    )
 endfunction()
