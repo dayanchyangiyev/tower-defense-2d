@@ -83,13 +83,12 @@ Obiectivul tău este să supraviețuiești fiecărui val de atacatori. Pe măsur
 
 Proiectul este configurat cu CMake.
 
-
-
+- **macOS**: rulați `./scripts/cmake.sh configure -c Debug`, apoi `./scripts/cmake.sh build -c Debug`. SDL3 și SDL3_image sunt livrate în `lib/SDL3`, iar CMake le va lega automat ca framework-uri.
+- **Windows / Ubuntu**: urmați pașii standard CMake (configurați prin `cmake -S . -B build` și compilați cu generatorul preferat) și instalați dependențele SDL3 din mediul vostru.
 
 ## Instrucțiuni pentru a rula executabilul
 
-
+Executabilul citește datele de intrare din `tastatura.txt`, astfel încât puteți reproduce rularea din CI cu `cat tastatura.txt | ./build/simple_game` (sau `.exe` pe Windows).
 
 ## Resurse
-
 

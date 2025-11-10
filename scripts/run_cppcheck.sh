@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 cppcheck --enable=all \
     --inline-suppr \

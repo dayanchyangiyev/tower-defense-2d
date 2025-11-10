@@ -1,4 +1,6 @@
-option(WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
+include_guard(GLOBAL)
+
+option(PROJECT_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 option(USE_ASAN "Use Address Sanitizer" OFF)
 option(USE_MSAN "Use Memory Sanitizer" OFF)
 option(CMAKE_COLOR_DIAGNOSTICS "Enable color diagnostics" ON)

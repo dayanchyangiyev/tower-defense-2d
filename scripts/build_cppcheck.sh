@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # default values
 # renovate: datasource=github-tags depName=danmar/cppcheck versioning=loose
@@ -23,10 +23,17 @@ while getopts ":b:o:v:" opt; do
   esac
 done
 
+ARCHIVE="${CPPCHECK_VER}.zip"
+URL="https://github.com/danmar/cppcheck/archive/${CPPCHECK_VER}.zip"
 
-wget "https://github.com/danmar/cppcheck/archive/${CPPCHECK_VER}.zip"
-unzip -q "${CPPCHECK_VER}.zip"
-rm "${CPPCHECK_VER}.zip"
+if command -v curl >/dev/null 2>&1; then
+    curl -L "${URL}" -o "${ARCHIVE}"
+else
+    wget "${URL}" -O "${ARCHIVE}"
+fi
+
+unzip -q "${ARCHIVE}"
+rm "${ARCHIVE}"
 mv "cppcheck-${CPPCHECK_VER}" cppcheck
 
 cd cppcheck || { echo "Eroare cd"; exit 1; }

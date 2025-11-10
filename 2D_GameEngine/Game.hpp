@@ -22,8 +22,11 @@ public:
         return isRunning;
     }
 
+    friend std::ostream& operator<<(std::ostream& os, const Game& game);
+
 private:
     bool isRunning;
+    int count = 0;
     SDL_Window *window;
     SDL_Renderer *renderer;
 };

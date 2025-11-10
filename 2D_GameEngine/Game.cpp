@@ -1,6 +1,7 @@
 #include "Game.hpp"
 
-SDL_Texture* playerTex; 
+SDL_Texture* playerTex;
+SDL_FRect destRect{}, sourceRect{};
 
 Game::Game()
 {}
@@ -58,13 +59,18 @@ void Game::handleEvents()
 
 }
 void Game::update()
-{}
+{
+    count++;
+    destRect.w = 64.0f;
+    destRect.h = 64.0f;
+    destRect.x = count;
+}
 
 void Game::render()
 {
     SDL_RenderClear(renderer);
     //this is where we would add stuff to render
-    SDL_RenderTexture(renderer, playerTex, NULL, NULL);
+    SDL_RenderTexture(renderer, playerTex, nullptr, &destRect);
     SDL_RenderPresent((renderer));
 }
 
@@ -72,7 +78,21 @@ void Game::clean()
 {
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
+    window = nullptr;
+    renderer = nullptr;
+    isRunning = false;
     SDL_Quit();
-    std::cout << "Game cleaned" << std::endl;
+    std::cout << *this << " cleaned" << std::endl;
 
+}
+
+std::ostream& operator<<(std::ostream& os, const Game& game)
+{
+    std::ios::fmtflags previousFlags = os.flags();
+    os << "Game isRunning=" << std::boolalpha << game.isRunning
+       << ", window=" << game.window
+       << ", renderer=" << game.renderer
+       << "]";
+    os.flags(previousFlags);
+    return os;
 }
