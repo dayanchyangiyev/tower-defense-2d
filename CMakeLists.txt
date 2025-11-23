@@ -21,6 +21,7 @@ set(GAME_ENGINE_DIR "${CMAKE_SOURCE_DIR}/2D_GameEngine")
 add_executable(${MAIN_EXECUTABLE_NAME}
     "${GAME_ENGINE_DIR}/main.cpp"
     "${GAME_ENGINE_DIR}/Game.cpp"
+    "${GAME_ENGINE_DIR}/TextureManager.cpp"
 )
 
 target_include_directories(${MAIN_EXECUTABLE_NAME} PRIVATE "${GAME_ENGINE_DIR}")
