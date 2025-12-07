@@ -22,6 +22,10 @@ add_executable(${MAIN_EXECUTABLE_NAME}
     "${GAME_ENGINE_DIR}/main.cpp"
     "${GAME_ENGINE_DIR}/Game.cpp"
     "${GAME_ENGINE_DIR}/TextureManager.cpp"
+    "${GAME_ENGINE_DIR}/GameObject.cpp"
+    "${GAME_ENGINE_DIR}/Level.cpp"
+    "${GAME_ENGINE_DIR}/Map.cpp"
+    "${GAME_ENGINE_DIR}/Logger.cpp"
 )
 
 target_include_directories(${MAIN_EXECUTABLE_NAME} PRIVATE "${GAME_ENGINE_DIR}")

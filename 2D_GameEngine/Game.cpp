@@ -1,15 +1,16 @@
 #include "Game.hpp"
-#include "TextureManager.h"
+#include "GameObject.h"
+#include "Level.hpp"
+#include "Logger.hpp"
+#include <sstream>
 
-
-SDL_Texture* playerTex;
-SDL_FRect destRect{}, sourceRect{};
-
-Game::Game()
+Game::Game() : level(nullptr), gameState(MENU), menuBg(nullptr), btnStart(nullptr), btnQuit(nullptr)
 {}
 
 Game::~Game()
-{}
+{
+    delete level;
+}
 
 void Game::init(const char *title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
@@ -20,12 +21,12 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
     }
     if(SDL_Init(SDL_INIT_VIDEO))
     {
-        std::cout << "Subsystem Initialised!..." << std::endl;
+        Logger::log("Subsystem Initialised!...");
 
-        window = SDL_CreateWindow(title, width, height, static_cast<SDL_WindowFlags>(flags)); //window initialization
+        window = SDL_CreateWindow(title, width, height, static_cast<SDL_WindowFlags>(flags)); 
         if(window)
         {
-            std::cout << "window created!" << std::endl;
+            Logger::log("window created!");
             SDL_SetWindowPosition(window, xpos, ypos);
         }
 
@@ -33,25 +34,87 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
         if(renderer)
         {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-            std::cout << "Renderer created!" << std::endl;
+            Logger::log("Renderer created!");
         }
         isRunning = true;
 
     } else {
         isRunning = false;
     }
+    
+    // Load Menu Assets
+    menuBg = TextureManager::LoadTexture("assets/menu_bg.bmp", renderer);
+    btnStart = TextureManager::LoadTexture("assets/btn_start.bmp", renderer);
+    btnQuit = TextureManager::LoadTexture("assets/btn_quit.bmp", renderer);
+    
+    startRect = {300.0f, 200.0f, 200.0f, 64.0f};
+    quitRect = {300.0f, 300.0f, 200.0f, 64.0f};
+    
+    // Init Level
+    level = new Level(renderer, 1);
+    
+    // Simple Map 
+    int mapArr[20][25];
+    for (int r = 0; r < 20; r++) {
+         for (int c = 0; c < 25; c++) {
+             mapArr[r][c] = 0; // Grass
+         }
+    }
+    for(int c=0; c<25; c++) mapArr[10][c] = 1; 
 
-
-    playerTex = TextureManager::LoadTexture("assets/tower.png", renderer);
+    level->loadMap(mapArr);
+    
+    // No hardcoded entities. Player places towers manually during Prep Phase.
+    // Level logic handles spawning enemies.
+    
+    gameState = MENU;
 }
 
 void Game::handleEvents()
 {
     SDL_Event event;
-    SDL_PollEvent(&event); //to record the event
+    SDL_PollEvent(&event); 
     switch (event.type) {
         case SDL_EVENT_QUIT:
             isRunning = false;
+            break;
+        case SDL_EVENT_MOUSE_BUTTON_DOWN:
+            if (gameState == MENU) {
+                float mx = event.button.x;
+                float my = event.button.y;
+                
+                // Check Start
+                if (mx >= startRect.x && mx <= startRect.x + startRect.w &&
+                    my >= startRect.y && my <= startRect.y + startRect.h) {
+                    gameState = PLAYING;
+                    Logger::log("Game Started!");
+                }
+                
+                // Check Quit
+                if (mx >= quitRect.x && mx <= quitRect.x + quitRect.w &&
+                    my >= quitRect.y && my <= quitRect.y + quitRect.h) {
+                    isRunning = false;
+                }
+            } else if (gameState == PLAYING) {
+                 // Mouse support is secondary now, keyboard requested
+                 // But we can keep it for "cheat" placement if needed?
+                 // User said "moving it with keys".
+                 // We will ignore mouse click placement for specific constraints or keep as fallback?
+                 // User said "player should be able to place 3 towers BY moving it with keys".
+                 // Implicitly implies mouse might be disabled or secondary.
+                 // Let's keep mouse click disabled to force key usage as per request, or just leave it.
+                 // I'll disable it to strictly follow "place ... by moving it with keys".
+            }
+            break;
+        case SDL_EVENT_KEY_DOWN:
+            if (gameState == PLAYING) {
+                if (event.key.key == SDLK_ESCAPE) {
+                    gameState = MENU;
+                } else {
+                    // Pass other keys to Level
+                    if (level) level->handleInput(event.key.key);
+                }
+            }
             break;
         default:
             break;
@@ -60,39 +123,44 @@ void Game::handleEvents()
 }
 void Game::update()
 {
-    count++;
-    destRect.w = 64.0f;
-    destRect.h = 64.0f;
-    destRect.x = count;
+    if (gameState == PLAYING && level) {
+         level->update();
+    }
 }
 
 void Game::render()
 {
     SDL_RenderClear(renderer);
-    //this is where we would add stuff to render
-    SDL_RenderTexture(renderer, playerTex, nullptr, &destRect);
+    
+    if (gameState == MENU) {
+        SDL_RenderTexture(renderer, menuBg, nullptr, nullptr);
+        SDL_RenderTexture(renderer, btnStart, nullptr, &startRect);
+        SDL_RenderTexture(renderer, btnQuit, nullptr, &quitRect);
+    } else if (gameState == PLAYING) {
+        if (level) level->render();
+    }
+    
     SDL_RenderPresent((renderer));
 }
 
 void Game::clean()
 {
+    SDL_DestroyTexture(menuBg);
+    SDL_DestroyTexture(btnStart);
+    SDL_DestroyTexture(btnQuit);
+    
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
     window = nullptr;
     renderer = nullptr;
     isRunning = false;
     SDL_Quit();
-    std::cout << *this << " cleaned" << std::endl;
+    Logger::log("Game cleaned");
 
 }
 
 std::ostream& operator<<(std::ostream& os, const Game& game)
 {
-    std::ios::fmtflags previousFlags = os.flags();
-    os << "Game isRunning=" << std::boolalpha << game.isRunning
-       << ", window=" << game.window
-       << ", renderer=" << game.renderer
-       << "]";
-    os.flags(previousFlags);
+    os << "Game [Running: " << game.isRunning << ", State: " << game.gameState << "]";
     return os;
 }

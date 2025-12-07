@@ -24,11 +24,26 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const Game& game);
 
+    enum GameState {
+        MENU,
+        PLAYING,
+        EXIT
+    };
+
 private:
     bool isRunning;
-    int count = 0;
     SDL_Window *window;
     SDL_Renderer *renderer;
+    
+    GameState gameState;
+    
+    // Menu Assets
+    SDL_Texture* menuBg;
+    SDL_Texture* btnStart;
+    SDL_Texture* btnQuit;
+    SDL_FRect startRect, quitRect;
+    
+    class Level* level;
 };
 
 #endif /* Game_hpp */
