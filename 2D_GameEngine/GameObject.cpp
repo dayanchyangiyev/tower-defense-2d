@@ -1,4 +1,5 @@
 #include "GameObject.h"
+#include "TextureManager.h"
 #include "Logger.hpp"
 #include <cstring>
 #include <sstream>

@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <exception>
 
-// --- Exceptions Hierarchy (Tema 2) ---
+
 class GameException : public std::exception {
 protected:
     std::string message;
@@ -55,7 +55,7 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Point2D& point);
 };
 
-#include "TextureManager.h"
+
 
 // --- GameObject Base Class ---
 class GameObject {
@@ -71,7 +71,7 @@ public:
     // Virtual Constructor
     virtual std::unique_ptr<GameObject> clone() const = 0;
 
-    
+    // TEMA 2: Virtual function specific to theme
     virtual void onClick() { /* Default: do nothing */ }
 
     // Pure Virtuals
@@ -166,7 +166,7 @@ protected:
     void print(std::ostream& os) const override;
 };
 
-
+// --- Derived Class 3: Projectile (New) ---
 class Projectile : public GameObject {
 private:
     float speed;

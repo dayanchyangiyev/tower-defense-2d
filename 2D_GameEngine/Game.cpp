@@ -1,5 +1,6 @@
 #include "Game.hpp"
 #include "GameObject.h"
+#include "TextureManager.h"
 #include "Level.hpp"
 #include "Logger.hpp"
 #include <sstream>

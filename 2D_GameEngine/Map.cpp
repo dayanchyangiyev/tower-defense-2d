@@ -1,5 +1,6 @@
 #include "Map.hpp"
 #include "GameObject.h"
+#include "TextureManager.h"
 #include "Logger.hpp"
 
 Map::Map(SDL_Renderer* ren) {
