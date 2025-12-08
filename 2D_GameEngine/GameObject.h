@@ -35,7 +35,7 @@ public:
     explicit LogicError(const std::string& msg) : GameException("Logic Error: " + msg) {}
 };
 
-// --- Point2D Helper ---
+// Point2D Helper
 class Point2D {
 private:
     float x, y;
@@ -57,21 +57,20 @@ public:
 
 
 
-// --- GameObject Base Class ---
+// GameObject Base Class 
 class GameObject {
 public:
     GameObject(const char* texturesheet, SDL_Renderer* ren, float x, float y);
     virtual ~GameObject();
 
-    // Copy-Swap Idiom - changed to standard assignment for abstract base
+    
     GameObject(const GameObject& other);
     GameObject& operator=(const GameObject& other); 
-    // friend void swap(GameObject& first, GameObject& second) noexcept; // removed swap friend for now or strictly used internally
+    // friend void swap(GameObject& first, GameObject& second) noexcept;
 
     // Virtual Constructor
     virtual std::unique_ptr<GameObject> clone() const = 0;
 
-    // TEMA 2: Virtual function specific to theme
     virtual void onClick() { /* Default: do nothing */ }
 
     // Pure Virtuals
@@ -104,7 +103,7 @@ protected:
     SDL_FRect srcRect{}, destRect{};
 };
 
-// --- Derived Class 1: Enemy ---
+// Enemy class
 class Enemy : public GameObject {
 private:
     std::string name; 
@@ -127,9 +126,6 @@ public:
     void setSpeed(float s) { speed = s; }
     void takeDamage(int amount);
     
-    // Enforcing strict setters? 
-    // TEMA 2 says "high level functions, eliminate getters/setters".
-    // Logic is mostly inside update/takeDamage.
     
     // Helpers
     std::string getName() const { return name; }
@@ -139,7 +135,7 @@ protected:
     void print(std::ostream& os) const override;
 };
 
-// --- Derived Class 2: Tower ---
+// Tower class
 class Tower : public GameObject {
 private:
     int damage;
@@ -166,13 +162,12 @@ protected:
     void print(std::ostream& os) const override;
 };
 
-// --- Derived Class 3: Projectile (New) ---
+// Projectile class
 class Projectile : public GameObject {
 private:
     float speed;
     Point2D target;
-    // We might need a target pointer or just position.
-    // Simple logic: moves to target, deactivates.
+    
 
 public:
     Projectile(Point2D start, Point2D target, float speed, SDL_Renderer* ren);
@@ -186,7 +181,7 @@ protected:
     void print(std::ostream& os) const override;
 };
 
-// --- Derived Class 4: Explosion (New) ---
+// Explosion class
 class Explosion : public GameObject {
 private:
     int life;

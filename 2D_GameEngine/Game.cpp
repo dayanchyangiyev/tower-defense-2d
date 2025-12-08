@@ -65,8 +65,6 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
 
     level->loadMap(mapArr);
     
-    // No hardcoded entities. Player places towers manually during Prep Phase.
-    // Level logic handles spawning enemies.
     
     gameState = MENU;
 }
@@ -97,14 +95,7 @@ void Game::handleEvents()
                     isRunning = false;
                 }
             } else if (gameState == PLAYING) {
-                 // Mouse support is secondary now, keyboard requested
-                 // But we can keep it for "cheat" placement if needed?
-                 // User said "moving it with keys".
-                 // We will ignore mouse click placement for specific constraints or keep as fallback?
-                 // User said "player should be able to place 3 towers BY moving it with keys".
-                 // Implicitly implies mouse might be disabled or secondary.
-                 // Let's keep mouse click disabled to force key usage as per request, or just leave it.
-                 // I'll disable it to strictly follow "place ... by moving it with keys".
+                 
             }
             break;
         case SDL_EVENT_KEY_DOWN:

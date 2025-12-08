@@ -4,13 +4,13 @@
 #include <cstring>
 #include <sstream>
 
-// --- Point2D ---
+//  Point2D
 std::ostream& operator<<(std::ostream& os, const Point2D& point) {
     os << "(" << point.x << ", " << point.y << ")";
     return os;
 }
 
-// --- GameObject ---
+// GameObject
 GameObject::GameObject(const char* texturesheet, SDL_Renderer* ren, float x, float y)
     : xpos(x), ypos(y), width(32), height(32), active(true), renderer(ren), texturePath(texturesheet ? texturesheet : "")
 {
@@ -70,7 +70,7 @@ GameObject& GameObject::operator=(const GameObject& other) {
     return *this;
 }
 
-// void swap(GameObject& first, GameObject& second) noexcept { ... } // Removed
+
 
 GameObject::~GameObject() {
     if (objTexture) {
@@ -87,7 +87,7 @@ std::ostream& operator<<(std::ostream& os, const GameObject& obj) {
     return os;
 }
 
-// --- Enemy ---
+// Enemy
 Enemy::Enemy(const char* name, Point2D startPos, int health, float speed, SDL_Renderer* ren)
     : GameObject("assets/enemy.bmp", ren, startPos.getX(), startPos.getY()),
       name(name ? name : "Unknown"), health(health), maxHealth(health), speed(speed)
@@ -158,7 +158,7 @@ void Enemy::print(std::ostream& os) const {
 }
 
 
-// --- Tower ---
+//  Tower
 Tower::Tower(Point2D pos, int damage, float range, SDL_Renderer* ren)
     : GameObject("assets/tower.bmp", ren, pos.getX(), pos.getY()),
       damage(damage), range(range), level(1), health(100)
@@ -205,7 +205,7 @@ void Tower::print(std::ostream& os) const {
     os << "Tower [Lvl:" << level << "] @" << getPos();
 }
 
-// --- Projectile ---
+// Projectile
 Projectile::Projectile(Point2D start, Point2D target, float speed, SDL_Renderer* ren)
     : GameObject("assets/projectile.png", ren, start.getX(), start.getY()), // Assuming asset exists or will fail
       speed(speed), target(target)
@@ -254,7 +254,7 @@ void Projectile::print(std::ostream& os) const {
     os << "Projectile @" << getPos();
 }
 
-// --- Explosion ---
+// Explosion
 Explosion::Explosion(Point2D pos, SDL_Renderer* ren) 
     : GameObject("assets/explosion.bmp", ren, pos.getX(), pos.getY()), life(10)
 {}

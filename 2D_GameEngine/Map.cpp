@@ -10,10 +10,7 @@ Map::Map(SDL_Renderer* ren) {
         grass = TextureManager::LoadTexture("assets/map_tile.bmp", ren);
         dirt = TextureManager::LoadTexture("assets/path_tile.bmp", ren);
     } catch (const ResourceError& e) {
-        // Critical map textures
-        // Maybe throw "MapLoadError" derived from GameException?
-        // For now rely on propagation or log.
-        // Let's propagate to main if critical.
+        
         throw; 
     }
     

@@ -100,7 +100,7 @@ void Level::update() {
         Logger::log("Time is up! You survived!");
     }
 
-    // --- Prep Phase ---
+    //  Prep Phase
     if (gameTimerFrames < 10 * 30) {
         if (gameTimerFrames % 30 == 0) {
             std::stringstream ss;
@@ -108,7 +108,7 @@ void Level::update() {
             Logger::log(ss.str());
         }
     } else {
-        // --- Spawn Logic ---
+        // Spawn Logic
         spawnTimer++;
         if (spawnTimer >= 150) {
             int side = rand() % 4;
@@ -129,13 +129,13 @@ void Level::update() {
         }
     }
     
-    // --- Polymorphic Update ---
+    // Polymorphic Update
     // Iterate and update all objects (Towers, Enemies, Projectiles)
     for(auto& obj : objects) {
         obj->update();
     }
     
-    // --- Logic / AI Updates ---
+    // Logic / AI Update
     // We need to fetch filtered lists to interact
     auto enemies = getEnemies();
     auto towers = getTowers();
@@ -193,13 +193,11 @@ void Level::update() {
         frameCount = 0;
     }
 
-    // --- Cleanup Dead Objects ---
+    // Cleanup Dead Object
     // Custom predicate dealing with unique_ptr
     std::erase_if(objects, [](const auto& obj){ 
         return !obj->isActive(); // Assuming base GameObject has isActive
-        // Wait, Tower has isAlive(). Enemy has isAlive(). 
-        // GameObject needs `isActive()` virtual or base logic.
-        // I added isActive() to GameObject in step 484.
+        
     });
     
     // Update Title
@@ -239,5 +237,4 @@ void Level::renderCursor() {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
-// simulateTurn is merged into update now.
-// operator<< removed or simplified.
+
