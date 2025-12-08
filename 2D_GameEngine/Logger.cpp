@@ -17,8 +17,7 @@ void Logger::log(const std::string& message) {
     if (logFile.is_open()) {
         logFile << message << std::endl;
     }
-    // Optional: Keep console output for critical errors? 
-    // User requested to "clear console prints", so we suppress cout.
+    
 }
 
 void Logger::close() {
