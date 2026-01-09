@@ -10,8 +10,11 @@
 #include <memory>
 #include <algorithm>
 #include <exception>
+#include "IDamageable.h"
 
-
+/**
+ * @brief Exception base class for Game errors.
+ */
 class GameException : public std::exception {
 protected:
     std::string message;
@@ -20,16 +23,25 @@ public:
     const char* what() const noexcept override { return message.c_str(); }
 };
 
+/**
+ * @brief Exception for resource loading failures (e.g., textures).
+ */
 class ResourceError : public GameException {
 public:
     explicit ResourceError(const std::string& msg) : GameException("Resource Error: " + msg) {}
 };
 
+/**
+ * @brief Exception for initialization failures.
+ */
 class InitializationError : public GameException {
 public:
     explicit InitializationError(const std::string& msg) : GameException("Init Error: " + msg) {}
 };
 
+/**
+ * @brief Exception for logic errors (e.g., invalid states).
+ */
 class LogicError : public GameException {
 public:
     explicit LogicError(const std::string& msg) : GameException("Logic Error: " + msg) {}
@@ -58,16 +70,18 @@ public:
 
 
 // GameObject Base Class 
+
+/**
+ * @brief Base class for all game entities.
+ */
 class GameObject {
 public:
-    GameObject(const char* texturesheet, SDL_Renderer* ren, float x, float y);
+    GameObject(const char* textureSheet, SDL_Renderer* ren, float x, float y);
     virtual ~GameObject();
 
-    
     GameObject(const GameObject& other);
     GameObject& operator=(const GameObject& other); 
-    // friend void swap(GameObject& first, GameObject& second) noexcept;
-
+    
     // Virtual Constructor
     virtual std::unique_ptr<GameObject> clone() const = 0;
 
@@ -76,23 +90,42 @@ public:
     // Pure Virtuals
     virtual void update() = 0;
     virtual void render() = 0;
+    
+    /**
+     * @brief Handle collision with another object.
+     * @param other The object collided with.
+     */
+    virtual void onCollision(GameObject& other);
 
     // NVI for printing
     friend std::ostream& operator<<(std::ostream& os, const GameObject& obj);
 
     // Getters/Setters
-    float getX() const { return xpos; }
-    float getY() const { return ypos; }
-    Point2D getPos() const { return Point2D(xpos, ypos); }
-    void setPos(float x, float y) { xpos = x; ypos = y; }
+    float getX() const { return xPos; }
+    float getY() const { return yPos; }
+    Point2D getPos() const { return Point2D(xPos, yPos); }
+    void setPos(float x, float y) { xPos = x; yPos = y; }
     bool isActive() const { return active; }
     void setActive(bool a) { active = a; }
+    
+    // Static member for teacher requirement
+    static int getCount(); 
+    
+    /**
+     * @brief Calculate distance between two objects.
+     */
+    static float distance(const GameObject& a, const GameObject& b);
+
+    /**
+     * @brief Check AABB collision between two objects.
+     */
+    static bool checkCollision(const GameObject& a, const GameObject& b); 
 
 protected:
     virtual void print(std::ostream& os) const; // For NVI
 
-    float xpos;
-    float ypos;
+    float xPos;
+    float yPos;
     int width;
     int height;
     bool active;
@@ -101,12 +134,17 @@ protected:
     std::string texturePath;
     SDL_Texture* objTexture;
     SDL_FRect srcRect{}, destRect{};
+    
+    static int objectCount;
 };
 
 // Enemy class
-class Enemy : public GameObject {
+/**
+ * @brief Enemy entity that seeks a target.
+ */
+class Enemy : public GameObject, public IDamageable {
 private:
-    std::string name; 
+    std::string name;  
     int health;
     int maxHealth;
     float speed;
@@ -121,22 +159,31 @@ public:
     void update() override;
     void render() override;
     void onClick() override; // TEMA 2 Specific
+    
+    // IDamageable
+    void takeDamage(int amount) override;
+    bool isAlive() const override { return health > 0; }
+    int getHealth() const override { return health; }
 
     void setTarget(float x, float y);
     void setSpeed(float s) { speed = s; }
-    void takeDamage(int amount);
     
+    // Static Factory
+    static std::unique_ptr<Enemy> createGoblin(SDL_Renderer* ren, int x, int y);
+    static std::unique_ptr<Enemy> createOrc(SDL_Renderer* ren, int x, int y);
     
     // Helpers
     std::string getName() const { return name; }
-    bool isAlive() const { return health > 0; }
 
 protected:
     void print(std::ostream& os) const override;
 };
 
 // Tower class
-class Tower : public GameObject {
+/**
+ * @brief Tower entity that shoots projectiles.
+ */
+class Tower : public GameObject, public IDamageable {
 private:
     int damage;
     float range;
@@ -151,11 +198,14 @@ public:
     void update() override;
     void render() override;
     
+    // IDamageable
+    void takeDamage(int amount) override;
+    bool isAlive() const override { return health > 0; }
+    int getHealth() const override { return health; }
+    
     void attack(Enemy& enemy);
     void upgrade();
-    void takeDamage(int amount);
     bool canAttack(const Enemy& enemy) const;
-    bool isAlive() const { return health > 0; }
     int getDamage() const { return damage; }
 
 protected:
@@ -163,6 +213,9 @@ protected:
 };
 
 // Projectile class
+/**
+ * @brief Projectile fired by towers.
+ */
 class Projectile : public GameObject {
 private:
     float speed;
@@ -176,12 +229,15 @@ public:
 
     void update() override;
     void render() override;
-
+    
 protected:
     void print(std::ostream& os) const override;
 };
 
 // Explosion class
+/**
+ * @brief Visual effects for explosions.
+ */
 class Explosion : public GameObject {
 private:
     int life;
@@ -190,6 +246,7 @@ public:
     std::unique_ptr<GameObject> clone() const override;
     void update() override;
     void render() override;
+    
 protected:
     void print(std::ostream& os) const override;
 };

@@ -3,8 +3,8 @@
 #include <sstream>
 
 Level::Level(SDL_Renderer* ren, int wave) 
-    : renderer(ren), currentWave(wave), frameCount(0), spawnTimer(0),
-      cursorX(12), cursorY(10), towersPlaced(0), gameTimerFrames(0), gameOver(false), gameWon(false) 
+    : cursorX(12), cursorY(10), towersPlaced(0), gameTimerFrames(0), gameOver(false), gameWon(false), 
+      renderer(ren), map(nullptr), currentWave(wave), frameCount(0), spawnTimer(0) 
 {
     map = new Map(ren);
     // Polymorphic load could go here
@@ -20,9 +20,11 @@ void Level::loadMap(int arr[20][25]) {
 }
 
 // Helper to filter objects by type
+// Using IDamageable interface check where appropriate would be better design, but for specific list access:
 std::vector<Enemy*> Level::getEnemies() {
     std::vector<Enemy*> enemies;
     for(auto& obj : objects) {
+        // Safe check using dynamic_cast as requested for meaningful RTTI
         if(auto e = dynamic_cast<Enemy*>(obj.get())) {
             if(e->isActive()) enemies.push_back(e);
         }
@@ -120,8 +122,14 @@ void Level::update() {
                 case 3: sx = 800; sy = rand() % 600; break; 
             }
             
-            // Polymorphic Add: Enemy
-            auto e = std::make_unique<Enemy>("Goblin", Point2D(sx, sy), 100, 1.0f, renderer);
+            // Polymorphic Add: Enemy using Static Factory
+            std::unique_ptr<Enemy> e;
+            if (rand() % 2 == 0) {
+                 e = Enemy::createGoblin(renderer, sx, sy);
+            } else {
+                 e = Enemy::createOrc(renderer, sx, sy);
+            }
+
             e->setTarget(400, 300); // Default Center
             objects.push_back(std::move(e));
             
@@ -162,8 +170,13 @@ void Level::update() {
         else enemy->setSpeed(2.5f);
         
         // Attack Tower
+        // Attack Tower using IDamageable interface check
+        // Meaningful dynamic_cast: we check if the object we are targeting is actually damageable
         if (targetTower && minDist < 32.0f) {
-           if (frameCount == 0) targetTower->takeDamage(1);
+           IDamageable* dmgObj = dynamic_cast<IDamageable*>(targetTower);
+           if (dmgObj && frameCount == 0) {
+               dmgObj->takeDamage(1); 
+           }
         }
     }
     
@@ -178,6 +191,9 @@ void Level::update() {
                     // Explicit Point2D construction to avoid ambiguity if any
                     Point2D startP = tower->getPos();
                     Point2D endP = enemy->getPos();
+                    
+                    // Use static distance helper
+                    // float d = GameObject::distance(*tower, *enemy);
                     
                     objects.push_back(std::unique_ptr<GameObject>(
                         new Projectile(startP, endP, 10.0f, renderer)

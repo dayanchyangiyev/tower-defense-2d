@@ -5,6 +5,9 @@
 #include <iostream>
 #include <SDL3_image/SDL_image.h>
 
+/**
+ * @brief Main Game class managing the game loop and state.
+ */
 class Game {
 
 public:

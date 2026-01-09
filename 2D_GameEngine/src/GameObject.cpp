@@ -4,19 +4,38 @@
 #include <cstring>
 #include <sstream>
 
+int GameObject::objectCount = 0;
+
+int GameObject::getCount() {
+    return objectCount;
+}
+
 //  Point2D
 std::ostream& operator<<(std::ostream& os, const Point2D& point) {
     os << "(" << point.x << ", " << point.y << ")";
     return os;
 }
 
+// Static Helpers implementation
+float GameObject::distance(const GameObject& a, const GameObject& b) {
+    return std::sqrt(std::pow(a.xPos - b.xPos, 2) + std::pow(a.yPos - b.yPos, 2));
+}
+
+bool GameObject::checkCollision(const GameObject& a, const GameObject& b) {
+    return (a.xPos < b.xPos + b.width &&
+            a.xPos + a.width > b.xPos &&
+            a.yPos < b.yPos + b.height &&
+            a.yPos + a.height > b.yPos);
+}
+
 // GameObject
-GameObject::GameObject(const char* texturesheet, SDL_Renderer* ren, float x, float y)
-    : xpos(x), ypos(y), width(32), height(32), active(true), renderer(ren), texturePath(texturesheet ? texturesheet : "")
+GameObject::GameObject(const char* textureSheet, SDL_Renderer* ren, float x, float y)
+    : xPos(x), yPos(y), width(32), height(32), active(true), renderer(ren), texturePath(textureSheet ? textureSheet : "")
 {
+    objectCount++;
     if (renderer && !texturePath.empty()) {
         try {
-            objTexture = TextureManager::LoadTexture(texturesheet, ren);
+            objTexture = TextureManager::LoadTexture(textureSheet, ren);
         } catch (const ResourceError& e) {
             Logger::log(e.what());
             // Fallback or rethrow? 
@@ -29,9 +48,10 @@ GameObject::GameObject(const char* texturesheet, SDL_Renderer* ren, float x, flo
 }
 
 GameObject::GameObject(const GameObject& other)
-    : xpos(other.xpos), ypos(other.ypos), width(other.width), height(other.height), 
+    : xPos(other.xPos), yPos(other.yPos), width(other.width), height(other.height), 
       active(other.active), renderer(other.renderer), texturePath(other.texturePath)
 {
+    objectCount++;
     if (renderer && !texturePath.empty()) {
         try {
             objTexture = TextureManager::LoadTexture(texturePath.c_str(), renderer);
@@ -46,8 +66,8 @@ GameObject::GameObject(const GameObject& other)
 GameObject& GameObject::operator=(const GameObject& other) {
     if (this == &other) return *this;
     
-    xpos = other.xpos;
-    ypos = other.ypos;
+    xPos = other.xPos;
+    yPos = other.yPos;
     width = other.width;
     height = other.height;
     active = other.active;
@@ -73,6 +93,7 @@ GameObject& GameObject::operator=(const GameObject& other) {
 
 
 GameObject::~GameObject() {
+    objectCount--;
     if (objTexture) {
         SDL_DestroyTexture(objTexture);
     }
@@ -87,11 +108,24 @@ std::ostream& operator<<(std::ostream& os, const GameObject& obj) {
     return os;
 }
 
+void GameObject::onCollision(GameObject& /*other*/) {
+    // Default implementation: log collision
+    // Logger::log("Collision detected!");
+}
+
 // Enemy
 Enemy::Enemy(const char* name, Point2D startPos, int health, float speed, SDL_Renderer* ren)
     : GameObject("assets/enemy.bmp", ren, startPos.getX(), startPos.getY()),
       name(name ? name : "Unknown"), health(health), maxHealth(health), speed(speed)
 {}
+
+std::unique_ptr<Enemy> Enemy::createGoblin(SDL_Renderer* ren, int x, int y) {
+    return std::make_unique<Enemy>("Goblin", Point2D(x, y), 80, 1.5f, ren);
+}
+
+std::unique_ptr<Enemy> Enemy::createOrc(SDL_Renderer* ren, int x, int y) {
+    return std::make_unique<Enemy>("Orc", Point2D(x, y), 150, 0.8f, ren);
+}
 
 std::unique_ptr<GameObject> Enemy::clone() const {
     return std::make_unique<Enemy>(*this);
@@ -101,18 +135,18 @@ void Enemy::update() {
     if (!active) return;
     
     // Move logic
-    float dx = targetPos.getX() - xpos;
-    float dy = targetPos.getY() - ypos;
+    float dx = targetPos.getX() - xPos;
+    float dy = targetPos.getY() - yPos;
     float dist = std::sqrt(dx*dx + dy*dy);
     
     if (dist > speed) {
-        xpos += (dx/dist) * speed;
-        ypos += (dy/dist) * speed;
+        xPos += (dx/dist) * speed;
+        yPos += (dy/dist) * speed;
     }
     
     // Update rects
     srcRect = {0, 0, 32, 32};
-    destRect = {xpos, ypos, (float)width, (float)height};
+    destRect = {xPos, yPos, (float)width, (float)height};
 }
 
 void renderHealthBar(SDL_Renderer* ren, float x, float y, int hp, int maxHp) {
@@ -132,7 +166,7 @@ void renderHealthBar(SDL_Renderer* ren, float x, float y, int hp, int maxHp) {
 void Enemy::render() {
     if (active) {
         if (objTexture) SDL_RenderTexture(renderer, objTexture, &srcRect, &destRect);
-        renderHealthBar(renderer, xpos, ypos, health, maxHealth);
+        renderHealthBar(renderer, xPos, yPos, health, maxHealth);
     }
 }
 
@@ -171,7 +205,7 @@ std::unique_ptr<GameObject> Tower::clone() const {
 void Tower::update() {
     // Logic can trigger here if needed
     srcRect = {0, 0, 32, 32};
-    destRect = {xpos, ypos, (float)width, (float)height};
+    destRect = {xPos, yPos, (float)width, (float)height};
 }
 
 void Tower::render() {
@@ -221,21 +255,24 @@ std::unique_ptr<GameObject> Projectile::clone() const {
 void Projectile::update() {
     if (!active) return;
     
-    float dx = target.getX() - xpos;
-    float dy = target.getY() - ypos;
+    // Check collisions in Level loop generally, or here if we have access to scene?
+    // Projectile logic is usually handled by Level loop detecting collisions.
+    
+    float dx = target.getX() - xPos;
+    float dy = target.getY() - yPos;
     float dist = std::sqrt(dx*dx + dy*dy);
     
     if (dist < speed) {
-        xpos = target.getX();
-        ypos = target.getY();
+        xPos = target.getX();
+        yPos = target.getY();
         active = false; // Reached target
     } else {
-        xpos += (dx/dist) * speed;
-        ypos += (dy/dist) * speed;
+        xPos += (dx/dist) * speed;
+        yPos += (dy/dist) * speed;
     }
     
     srcRect = {0, 0, 32, 32}; // Assume small sprite or reuse
-    destRect = {xpos, ypos, 16.0f, 16.0f}; // Smaller
+    destRect = {xPos, yPos, 16.0f, 16.0f}; // Smaller
 }
 
 void Projectile::render() {
@@ -243,7 +280,7 @@ void Projectile::render() {
         SDL_RenderTexture(renderer, objTexture, &srcRect, &destRect);
     } else if (active) {
         // Fallback render (yellow dot)
-        SDL_FRect r = {xpos, ypos, 8, 8};
+        SDL_FRect r = {xPos, yPos, 8, 8};
         SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
         SDL_RenderFillRect(renderer, &r);
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -267,7 +304,7 @@ void Explosion::update() {
     life--;
     if (life <= 0) active = false;
     srcRect = {0, 0, 32, 32};
-    destRect = {xpos, ypos, 32.0f, 32.0f};
+    destRect = {xPos, yPos, 32.0f, 32.0f};
 }
 
 void Explosion::render() {
@@ -276,7 +313,7 @@ void Explosion::render() {
              SDL_RenderTexture(renderer, objTexture, &srcRect, &destRect);
         } else {
              // Fallback: Red square
-             SDL_FRect r = {xpos, ypos, 32.0f, 32.0f};
+             SDL_FRect r = {xPos, yPos, 32.0f, 32.0f};
              SDL_SetRenderDrawColor(renderer, 255, 100, 0, 255); // Orange
              SDL_RenderFillRect(renderer, &r);
              SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);

@@ -5,7 +5,7 @@
 #include "Logger.hpp"
 #include <sstream>
 
-Game::Game() : level(nullptr), gameState(MENU), menuBg(nullptr), btnStart(nullptr), btnQuit(nullptr)
+Game::Game() : isRunning(false), window(nullptr), renderer(nullptr), gameState(MENU), menuBg(nullptr), btnStart(nullptr), btnQuit(nullptr), level(nullptr)
 {}
 
 Game::~Game()

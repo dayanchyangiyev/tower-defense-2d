@@ -7,6 +7,9 @@
 #include "GameObject.h"
 #include "Map.hpp"
 
+/**
+ * @brief Manages a single game level, including map and objects.
+ */
 class Level {
 public:
     Level(SDL_Renderer* ren, int wave);

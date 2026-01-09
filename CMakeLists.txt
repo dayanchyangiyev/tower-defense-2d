@@ -17,18 +17,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(GAME_ENGINE_DIR "${CMAKE_SOURCE_DIR}/2D_GameEngine")
+set(SRC_DIR "${GAME_ENGINE_DIR}/src")
+set(HEADERS_DIR "${GAME_ENGINE_DIR}/headers")
 
 add_executable(${MAIN_EXECUTABLE_NAME}
-    "${GAME_ENGINE_DIR}/main.cpp"
-    "${GAME_ENGINE_DIR}/Game.cpp"
-    "${GAME_ENGINE_DIR}/TextureManager.cpp"
-    "${GAME_ENGINE_DIR}/GameObject.cpp"
-    "${GAME_ENGINE_DIR}/Level.cpp"
-    "${GAME_ENGINE_DIR}/Map.cpp"
-    "${GAME_ENGINE_DIR}/Logger.cpp"
+    "${SRC_DIR}/main.cpp"
+    "${SRC_DIR}/Game.cpp"
+    "${SRC_DIR}/TextureManager.cpp"
+    "${SRC_DIR}/GameObject.cpp"
+    "${SRC_DIR}/Level.cpp"
+    "${SRC_DIR}/Map.cpp"
+    "${SRC_DIR}/Logger.cpp"
 )
 
-target_include_directories(${MAIN_EXECUTABLE_NAME} PRIVATE "${GAME_ENGINE_DIR}")
+target_include_directories(${MAIN_EXECUTABLE_NAME} PRIVATE "${HEADERS_DIR}")
 
 setup_sdl_dependencies(${MAIN_EXECUTABLE_NAME})
 set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
