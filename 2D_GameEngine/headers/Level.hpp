@@ -6,6 +6,7 @@
 #include <SDL3/SDL.h>
 #include "GameObject.h"
 #include "Map.hpp"
+#include "TowerFactory.h"
 
 /**
  * @brief Manages a single game level, including map and objects.
@@ -35,7 +36,7 @@ private:
 
     int cursorX, cursorY; 
     int towersPlaced;
-    const int MAX_TOWERS = 3;
+    // MAX_TOWERS moved to cpp implementation to force update
     
     int gameTimerFrames; 
     bool gameOver;
@@ -47,6 +48,9 @@ private:
     int currentWave;
     int frameCount;
     int spawnTimer;
+    
+    // UI Logic
+    TowerType selectedTowerType = TowerType::Basic;
     
     friend std::ostream& operator<<(std::ostream& os, const Level& level);
 };

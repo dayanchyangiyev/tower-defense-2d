@@ -1,6 +1,7 @@
 #include "GameObject.h"
 #include "TextureManager.h"
 #include "Logger.hpp"
+#include "Effect.h" // Full definition needed here
 #include <cstring>
 #include <sstream>
 
@@ -119,12 +120,23 @@ Enemy::Enemy(const char* name, Point2D startPos, int health, float speed, SDL_Re
       name(name ? name : "Unknown"), health(health), maxHealth(health), speed(speed)
 {}
 
+// Deep Copy Constructor for Enemy
+Enemy::Enemy(const Enemy& other) 
+    : GameObject(other), name(other.name), health(other.health), 
+      maxHealth(other.maxHealth), speed(other.speed), targetPos(other.targetPos)
+{
+    // Deep copy effects
+    for(const auto& eff : other.effects) {
+        effects.push_back(eff->clone());
+    }
+}
+
 std::unique_ptr<Enemy> Enemy::createGoblin(SDL_Renderer* ren, int x, int y) {
-    return std::make_unique<Enemy>("Goblin", Point2D(x, y), 80, 1.5f, ren);
+    return std::make_unique<Enemy>("Goblin", Point2D(x, y), 80, 0.7f, ren); // Slower (1.0 -> 0.7)
 }
 
 std::unique_ptr<Enemy> Enemy::createOrc(SDL_Renderer* ren, int x, int y) {
-    return std::make_unique<Enemy>("Orc", Point2D(x, y), 150, 0.8f, ren);
+    return std::make_unique<Enemy>("Orc", Point2D(x, y), 150, 0.35f, ren); // Slower (0.5 -> 0.35)
 }
 
 std::unique_ptr<GameObject> Enemy::clone() const {
@@ -147,6 +159,37 @@ void Enemy::update() {
     // Update rects
     srcRect = {0, 0, 32, 32};
     destRect = {xPos, yPos, (float)width, (float)height};
+    
+    updateEffects();
+}
+
+void Enemy::addEffect(std::unique_ptr<Effect> effect) {
+    // Dynamic Cast Check: Do we already have this effect?
+    // If we have a SlowEffect, maybe don't add another?
+    // Or just push back.
+    // Let's demonstrate dynamic_cast usage:
+    bool exists = false;
+    for(const auto& eff : effects) {
+        if (effect->getName() == "Slow" && eff->getName() == "Slow") {
+            // Refresh?
+            exists = true; 
+        }
+    }
+    
+    if(!exists) {
+        effect->apply(this);
+        effects.push_back(std::move(effect));
+    }
+}
+
+void Enemy::updateEffects() {
+    for(auto& eff : effects) {
+        eff->update(this);
+    }
+    
+    std::erase_if(effects, [](const auto& eff){
+        return eff->isFinished();
+    });
 }
 
 void renderHealthBar(SDL_Renderer* ren, float x, float y, int hp, int maxHp) {
@@ -192,11 +235,18 @@ void Enemy::print(std::ostream& os) const {
 }
 
 
+#define MAX_TOWERS 4
+
 //  Tower
 Tower::Tower(Point2D pos, int damage, float range, SDL_Renderer* ren)
-    : GameObject("assets/tower.bmp", ren, pos.getX(), pos.getY()),
+    : GameObject("assets/tower_white.png", ren, pos.getX(), pos.getY()),
       damage(damage), range(range), level(1), health(100)
-{}
+{
+    // Default Visual: YELLOW
+    if (objTexture) {
+        SDL_SetTextureColorMod(objTexture, 255, 255, 0);
+    }
+}
 
 std::unique_ptr<GameObject> Tower::clone() const {
     return std::make_unique<Tower>(*this);
@@ -240,16 +290,15 @@ void Tower::print(std::ostream& os) const {
 }
 
 // Projectile
-Projectile::Projectile(Point2D start, Point2D target, float speed, SDL_Renderer* ren)
-    : GameObject("assets/projectile.png", ren, start.getX(), start.getY()), // Assuming asset exists or will fail
-      speed(speed), target(target)
+Projectile::Projectile(Point2D start, Point2D target, float speed, SDL_Renderer* ren, SDL_Color col)
+    : GameObject(nullptr, ren, start.getX(), start.getY()), // nullptr texture to force fallback or simple shape
+      speed(speed), target(target), color(col)
 {
-    // Try to load a simple shape if texture fails?
-    // We already handle exception in base.
+    // We intentionally pass nullptr texture to use the color rect/dot
 }
 
 std::unique_ptr<GameObject> Projectile::clone() const {
-    return std::make_unique<Projectile>(*this);
+    return std::make_unique<Projectile>(Point2D(xPos, yPos), target, speed, renderer, color);
 }
 
 void Projectile::update() {
@@ -276,12 +325,10 @@ void Projectile::update() {
 }
 
 void Projectile::render() {
-    if (active && objTexture) {
-        SDL_RenderTexture(renderer, objTexture, &srcRect, &destRect);
-    } else if (active) {
-        // Fallback render (yellow dot)
+    if (active) {
+        // Render colored square/dot
         SDL_FRect r = {xPos, yPos, 8, 8};
-        SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+        SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
         SDL_RenderFillRect(renderer, &r);
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     }

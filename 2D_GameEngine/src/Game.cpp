@@ -4,8 +4,10 @@
 #include "Level.hpp"
 #include "Logger.hpp"
 #include <sstream>
+#include <fstream>
+#include <string>
 
-Game::Game() : isRunning(false), window(nullptr), renderer(nullptr), gameState(MENU), menuBg(nullptr), btnStart(nullptr), btnQuit(nullptr), level(nullptr)
+Game::Game() : isRunning(false), window(nullptr), renderer(nullptr), gameState(MENU), menuBg(nullptr), btnStart(nullptr), btnQuit(nullptr), btnManual(nullptr), level(nullptr)
 {}
 
 Game::~Game()
@@ -47,9 +49,11 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
     menuBg = TextureManager::LoadTexture("assets/menu_bg.bmp", renderer);
     btnStart = TextureManager::LoadTexture("assets/btn_start.bmp", renderer);
     btnQuit = TextureManager::LoadTexture("assets/btn_quit.bmp", renderer);
+    btnManual = TextureManager::LoadTexture("assets/btn_manual.png", renderer);
     
     startRect = {300.0f, 200.0f, 200.0f, 64.0f};
-    quitRect = {300.0f, 300.0f, 200.0f, 64.0f};
+    manualRect = {300.0f, 300.0f, 200.0f, 64.0f};
+    quitRect = {300.0f, 400.0f, 200.0f, 64.0f};
     
     // Init Level
     level = new Level(renderer, 1);
@@ -87,6 +91,25 @@ void Game::handleEvents()
                     my >= startRect.y && my <= startRect.y + startRect.h) {
                     gameState = PLAYING;
                     Logger::getInstance().log("Game Started!");
+                }
+                
+                // Check Manual
+                if (mx >= manualRect.x && mx <= manualRect.x + manualRect.w &&
+                    my >= manualRect.y && my <= manualRect.y + manualRect.h) {
+                    
+                    std::string manualContent = "Could not load manual.txt";
+                    std::ifstream manualFile("assets/manual.txt");
+                    if (manualFile.is_open()) {
+                        std::stringstream buffer;
+                        buffer << manualFile.rdbuf();
+                        manualContent = buffer.str();
+                        manualFile.close();
+                    } else {
+                        Logger::getInstance().log("Failed to load assets/manual.txt");
+                    }
+                        
+                    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Game Manual", manualContent.c_str(), window);
+                    Logger::getInstance().log("Manual Opened.");
                 }
                 
                 // Check Quit
@@ -127,6 +150,7 @@ void Game::render()
     if (gameState == MENU) {
         SDL_RenderTexture(renderer, menuBg, nullptr, nullptr);
         SDL_RenderTexture(renderer, btnStart, nullptr, &startRect);
+        SDL_RenderTexture(renderer, btnManual, nullptr, &manualRect);
         SDL_RenderTexture(renderer, btnQuit, nullptr, &quitRect);
     } else if (gameState == PLAYING) {
         if (level) level->render();
@@ -139,6 +163,7 @@ void Game::clean()
 {
     SDL_DestroyTexture(menuBg);
     SDL_DestroyTexture(btnStart);
+    SDL_DestroyTexture(btnManual);
     SDL_DestroyTexture(btnQuit);
     
     SDL_DestroyWindow(window);

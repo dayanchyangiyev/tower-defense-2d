@@ -44,7 +44,8 @@ private:
     SDL_Texture* menuBg;
     SDL_Texture* btnStart;
     SDL_Texture* btnQuit;
-    SDL_FRect startRect, quitRect;
+    SDL_Texture* btnManual;
+    SDL_FRect startRect, quitRect, manualRect;
     
     class Level* level;
 };

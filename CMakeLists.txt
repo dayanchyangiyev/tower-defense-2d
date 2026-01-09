@@ -28,6 +28,7 @@ add_executable(${MAIN_EXECUTABLE_NAME}
     "${SRC_DIR}/Level.cpp"
     "${SRC_DIR}/Map.cpp"
     "${SRC_DIR}/Logger.cpp"
+    "${SRC_DIR}/Effect.cpp"
 )
 
 target_include_directories(${MAIN_EXECUTABLE_NAME} PRIVATE "${HEADERS_DIR}")

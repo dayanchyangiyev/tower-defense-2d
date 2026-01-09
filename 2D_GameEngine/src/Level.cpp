@@ -2,8 +2,11 @@
 #include "Logger.hpp"
 #include "Utils.hpp"
 #include "EnemyFactory.h"
+#include "TowerFactory.h"
 #include "Matrix2D.hpp"
 #include <sstream>
+
+#define MAX_TOWERS 4
 
 // Second instantiation of template class as requested (dummy usage)
 Matrix2D<float, 20, 25> dangerMap;
@@ -61,17 +64,27 @@ void Level::placeTower(int x, int y) {
 
     float tx = col * 32.0f;
     float ty = row * 32.0f;
+
+    // Logic: Only allow placement during Prep Phase
+    if (gameTimerFrames >= 20 * 30) {
+        Logger::getInstance().log("Prep Phase Over! Cannot place towers.");
+        return;
+    }
     
     if (towersPlaced < MAX_TOWERS) {
         towersPlaced++;
         // Polymorphic Add: Tower
-        objects.push_back(std::make_unique<Tower>(Point2D(tx, ty), 50, 150.0f, renderer));
+        // Use Factory with selected type
+        auto t = TowerFactory::createTower(selectedTowerType, Point2D(tx, ty), renderer);
+        objects.push_back(std::move(t));
         
         std::stringstream ss;
-        ss << "Placed tower at grid (" << col << ", " << row << ")";
+        ss << "Placed tower at grid (" << col << ", " << row << "). Count: " << towersPlaced << "/" << MAX_TOWERS;
         Logger::getInstance().log(ss.str());
     } else {
-        Logger::getInstance().log("Max towers reached!");
+        std::stringstream ss;
+        ss << "Max towers reached! (" << towersPlaced << "/" << MAX_TOWERS << ")";
+        Logger::getInstance().log(ss.str());
     }
 }
 
@@ -94,6 +107,18 @@ void Level::handleInput(SDL_Keycode key) {
         case SDLK_RETURN:
             placeTower(cursorX, cursorY);
             break;
+        case SDLK_1:
+            selectedTowerType = TowerType::Basic;
+            Logger::getInstance().log("Selected: Basic Tower");
+            break;
+        case SDLK_2:
+            selectedTowerType = TowerType::Ice;
+            Logger::getInstance().log("Selected: Ice Tower");
+            break;
+        case SDLK_3:
+            selectedTowerType = TowerType::Fire;
+            Logger::getInstance().log("Selected: Fire Tower");
+            break;
     }
 }
 
@@ -108,11 +133,11 @@ void Level::update() {
         Logger::getInstance().log("Time is up! You survived!");
     }
 
-    //  Prep Phase
-    if (gameTimerFrames < 10 * 30) {
+    //  Prep Phase (20 seconds)
+    if (gameTimerFrames < 20 * 30) {
         if (gameTimerFrames % 30 == 0) {
             std::stringstream ss;
-            ss << "Prep Phase: " << (10 - gameTimerFrames/30) << "s remaining. Place towers!";
+            ss << "Prep Phase: " << (20 - gameTimerFrames/30) << "s remaining. Place towers!";
             Logger::getInstance().log(ss.str());
         }
     } else {
@@ -189,7 +214,7 @@ void Level::update() {
     if (frameCount >= 30) { 
         for(auto* tower : towers) {
             // Instantiation 2 of template function
-            Enemy* nearestEnemy = Utils::findNearest<Enemy>(*tower, objects, tower->getHealth() > 50 ? 200.0f : 150.0f); // Range depends on health just for fun
+            Enemy* nearestEnemy = Utils::findNearest<Enemy>(*tower, objects, tower->getRange());
             
             if (nearestEnemy && tower->canAttack(*nearestEnemy)) {
                 tower->attack(*nearestEnemy);
@@ -201,7 +226,7 @@ void Level::update() {
                     // float d = GameObject::distance(*tower, *enemy);
                     
                 objects.push_back(std::unique_ptr<GameObject>(
-                    new Projectile(startP, endP, 10.0f, renderer)
+                    new Projectile(startP, endP, 10.0f, renderer, tower->getProjectileColor())
                 ));
                 // Add Explosion (Muzzle Flash)
                 objects.push_back(std::unique_ptr<GameObject>(
@@ -224,9 +249,9 @@ void Level::update() {
     if (win) {
         std::stringstream titleSS;
         int seconds = gameTimerFrames / 30;
-        int prepLeft = 10 - seconds;
+        int prepLeft = 20 - seconds;
         if (prepLeft > 0) titleSS << "Tower Defense - PREP: " << prepLeft << "s";
-        else titleSS << "Tower Defense - SURVIVE: " << (seconds - 10) << "s";
+        else titleSS << "Tower Defense - SURVIVE: " << (seconds - 20) << "s";
         SDL_SetWindowTitle(win, titleSS.str().c_str());
     }
 }

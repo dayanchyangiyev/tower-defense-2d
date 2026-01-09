@@ -1,0 +1,18 @@
+=== HOW TO PLAY ===
+
+OBJECTIVE:
+Survive waves of enemies and prevent them from reaching your base!
+
+CONTROLS:
+- ARROW KEYS: Move the cursor on the grid.
+- ENTER: Place a tower at the cursor location.
+- KEYS 1, 2, 3: Select Tower Type.
+
+TOWER TYPES:
+1. BASIC TOWER (White): Reliable single-target damage.
+2. ICE TOWER (Cyan): Low damage, but SLOWS enemies down.
+3. FIRE TOWER (Red): Burns enemies, dealing damage over time.
+
+STRATEGY TIPS:
+- Place Ice Towers at corners to maximize slow duration.
+- Use Fire Towers early to whittle down high-health enemies.

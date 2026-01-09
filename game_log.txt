@@ -3,38 +3,115 @@ window created!
 Renderer created!
 Warning: Water texture missing. Proceeding without it.
 Game Started!
+Prep Phase: 19s remaining. Place towers!
+Prep Phase: 18s remaining. Place towers!
+Placed tower at grid (12, 5). Count: 1/4
+Prep Phase: 17s remaining. Place towers!
+Selected: Ice Tower
+Prep Phase: 16s remaining. Place towers!
+Placed tower at grid (11, 5). Count: 2/4
+Prep Phase: 15s remaining. Place towers!
+Selected: Fire Tower
+Placed tower at grid (10, 5). Count: 3/4
+Prep Phase: 14s remaining. Place towers!
+Prep Phase: 13s remaining. Place towers!
+Prep Phase: 12s remaining. Place towers!
+Selected: Ice Tower
+Prep Phase: 11s remaining. Place towers!
+Selected: Fire Tower
+Placed tower at grid (11, 6). Count: 4/4
+Prep Phase: 10s remaining. Place towers!
 Prep Phase: 9s remaining. Place towers!
-Placed tower at grid (12, 5)
+Max towers reached! (4/4)
 Prep Phase: 8s remaining. Place towers!
 Prep Phase: 7s remaining. Place towers!
-Placed tower at grid (5, 5)
 Prep Phase: 6s remaining. Place towers!
 Prep Phase: 5s remaining. Place towers!
-Placed tower at grid (9, 8)
 Prep Phase: 4s remaining. Place towers!
 Prep Phase: 3s remaining. Place towers!
 Prep Phase: 2s remaining. Place towers!
 Prep Phase: 1s remaining. Place towers!
-Resource Error: Failed to load texture: assets/projectile.png
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
 Resource Error: Failed to load texture: assets/explosion.bmp
 Enemy Goblin defeated!
-Resource Error: Failed to load texture: assets/projectile.png
 Resource Error: Failed to load texture: assets/explosion.bmp
-Resource Error: Failed to load texture: assets/projectile.png
 Resource Error: Failed to load texture: assets/explosion.bmp
-Resource Error: Failed to load texture: assets/projectile.png
 Resource Error: Failed to load texture: assets/explosion.bmp
-Resource Error: Failed to load texture: assets/projectile.png
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Enemy Goblin defeated!
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Enemy Goblin defeated!
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
 Resource Error: Failed to load texture: assets/explosion.bmp
 Enemy Orc defeated!
-Resource Error: Failed to load texture: assets/projectile.png
 Resource Error: Failed to load texture: assets/explosion.bmp
-Enemy Goblin defeated!
-Resource Error: Failed to load texture: assets/projectile.png
 Resource Error: Failed to load texture: assets/explosion.bmp
-Resource Error: Failed to load texture: assets/projectile.png
 Resource Error: Failed to load texture: assets/explosion.bmp
-Enemy Goblin defeated!
-Resource Error: Failed to load texture: assets/projectile.png
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Enemy Orc defeated!
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Enemy Orc defeated!
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/explosion.bmp
 Resource Error: Failed to load texture: assets/explosion.bmp
 Game cleaned

@@ -12,9 +12,8 @@
 #include <exception>
 #include "IDamageable.h"
 
-/**
- * @brief Exception base class for Game errors.
- */
+// Forward check
+class Effect;
 class GameException : public std::exception {
 protected:
     std::string message;
@@ -148,10 +147,15 @@ private:
     int health;
     int maxHealth;
     float speed;
+    
+    // Effects List
+    std::vector<std::unique_ptr<Effect>> effects;
+
     Point2D targetPos;
 
 public:
     Enemy(const char* name, Point2D startPos, int health, float speed, SDL_Renderer* ren);
+    Enemy(const Enemy& other); // Deep Copy
     
     // Clone
     std::unique_ptr<GameObject> clone() const override;
@@ -167,6 +171,11 @@ public:
 
     void setTarget(float x, float y);
     void setSpeed(float s) { speed = s; }
+    float getSpeed() const { return speed; }
+    
+    // Effect Management
+    void addEffect(std::unique_ptr<Effect> effect);
+    void updateEffects();
     
     // Static Factory
     static std::unique_ptr<Enemy> createGoblin(SDL_Renderer* ren, int x, int y);
@@ -203,10 +212,13 @@ public:
     bool isAlive() const override { return health > 0; }
     int getHealth() const override { return health; }
     
-    void attack(Enemy& enemy);
+    virtual void attack(Enemy& enemy);
     void upgrade();
     bool canAttack(const Enemy& enemy) const;
     int getDamage() const { return damage; }
+    float getRange() const { return range; }
+    
+    virtual SDL_Color getProjectileColor() const { return {0, 0, 0, 255}; } // Default Black
 
 protected:
     void print(std::ostream& os) const override;
@@ -220,10 +232,11 @@ class Projectile : public GameObject {
 private:
     float speed;
     Point2D target;
+    SDL_Color color;
     
 
 public:
-    Projectile(Point2D start, Point2D target, float speed, SDL_Renderer* ren);
+    Projectile(Point2D start, Point2D target, float speed, SDL_Renderer* ren, SDL_Color col);
     
     std::unique_ptr<GameObject> clone() const override;
 
