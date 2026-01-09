@@ -1,6 +1,12 @@
 #include "Level.hpp"
 #include "Logger.hpp"
+#include "Utils.hpp"
+#include "EnemyFactory.h"
+#include "Matrix2D.hpp"
 #include <sstream>
+
+// Second instantiation of template class as requested (dummy usage)
+Matrix2D<float, 20, 25> dangerMap;
 
 Level::Level(SDL_Renderer* ren, int wave) 
     : cursorX(12), cursorY(10), towersPlaced(0), gameTimerFrames(0), gameOver(false), gameWon(false), 
@@ -63,9 +69,9 @@ void Level::placeTower(int x, int y) {
         
         std::stringstream ss;
         ss << "Placed tower at grid (" << col << ", " << row << ")";
-        Logger::log(ss.str());
+        Logger::getInstance().log(ss.str());
     } else {
-        Logger::log("Max towers reached!");
+        Logger::getInstance().log("Max towers reached!");
     }
 }
 
@@ -99,7 +105,7 @@ void Level::update() {
     if (gameTimerFrames >= 30 * 60) { 
         gameOver = true;
         gameWon = true; 
-        Logger::log("Time is up! You survived!");
+        Logger::getInstance().log("Time is up! You survived!");
     }
 
     //  Prep Phase
@@ -107,7 +113,7 @@ void Level::update() {
         if (gameTimerFrames % 30 == 0) {
             std::stringstream ss;
             ss << "Prep Phase: " << (10 - gameTimerFrames/30) << "s remaining. Place towers!";
-            Logger::log(ss.str());
+            Logger::getInstance().log(ss.str());
         }
     } else {
         // Spawn Logic
@@ -122,12 +128,12 @@ void Level::update() {
                 case 3: sx = 800; sy = rand() % 600; break; 
             }
             
-            // Polymorphic Add: Enemy using Static Factory
+            // Polymorphic Add: Enemy using Factory Pattern
             std::unique_ptr<Enemy> e;
             if (rand() % 2 == 0) {
-                 e = Enemy::createGoblin(renderer, sx, sy);
+                 e = EnemyFactory::createGoblin(renderer, sx, sy);
             } else {
-                 e = Enemy::createOrc(renderer, sx, sy);
+                 e = EnemyFactory::createOrc(renderer, sx, sy);
             }
 
             e->setTarget(400, 300); // Default Center
@@ -148,35 +154,33 @@ void Level::update() {
     auto enemies = getEnemies();
     auto towers = getTowers();
     
-    // 1. Enemy AI: Target Towers
+    // 1. Enemy AI: Target Towers (Using template function findNearest)
     for(auto* enemy : enemies) {
-        float minDist = 99999.0f;
-        Point2D target(400, 300);
-        Tower* targetTower = nullptr;
+        // Find nearest Tower to attack
+        // Instantiation 1 of template function
+        Tower* targetTower = Utils::findNearest<Tower>(*enemy, objects, 99999.0f);
         
-        for(auto* tower : towers) {
-            float d = enemy->getPos().distanceTo(tower->getPos());
-            if (d < minDist) {
-                minDist = d;
-                target = tower->getPos();
-                targetTower = tower;
-            }
+        if (targetTower) {
+            enemy->setTarget(targetTower->getX(), targetTower->getY());
+        } else {
+            enemy->setTarget(400, 300); // Default to center if no towers
         }
-        enemy->setTarget(target.getX(), target.getY());
         
         // Terrain Speed
         int r = (int)enemy->getY() / 32;
         if (r == 10) enemy->setSpeed(1.0f);
         else enemy->setSpeed(2.5f);
         
-        // Attack Tower
-        // Attack Tower using IDamageable interface check
-        // Meaningful dynamic_cast: we check if the object we are targeting is actually damageable
-        if (targetTower && minDist < 32.0f) {
-           IDamageable* dmgObj = dynamic_cast<IDamageable*>(targetTower);
-           if (dmgObj && frameCount == 0) {
-               dmgObj->takeDamage(1); 
-           }
+        // Attack Tower if close
+        if (targetTower) {
+             float dist = GameObject::distance(*enemy, *targetTower);
+             if (dist < 32.0f) {
+                 // Meaningful cast for logic
+                 IDamageable* dmgObj = dynamic_cast<IDamageable*>(targetTower);
+                 if (dmgObj && frameCount == 0) {
+                     dmgObj->takeDamage(1); 
+                 }
+             }
         }
     }
     
@@ -184,26 +188,25 @@ void Level::update() {
     frameCount++;
     if (frameCount >= 30) { 
         for(auto* tower : towers) {
-            for(auto* enemy : enemies) {
-                if (tower->canAttack(*enemy)) {
-                    tower->attack(*enemy);
-                    // Spawn Projectile (Visual)
-                    // Explicit Point2D construction to avoid ambiguity if any
-                    Point2D startP = tower->getPos();
-                    Point2D endP = enemy->getPos();
+            // Instantiation 2 of template function
+            Enemy* nearestEnemy = Utils::findNearest<Enemy>(*tower, objects, tower->getHealth() > 50 ? 200.0f : 150.0f); // Range depends on health just for fun
+            
+            if (nearestEnemy && tower->canAttack(*nearestEnemy)) {
+                tower->attack(*nearestEnemy);
+                // Spawn Projectile (Visual)
+                Point2D startP = tower->getPos();
+                Point2D endP = nearestEnemy->getPos();
                     
                     // Use static distance helper
                     // float d = GameObject::distance(*tower, *enemy);
                     
-                    objects.push_back(std::unique_ptr<GameObject>(
-                        new Projectile(startP, endP, 10.0f, renderer)
-                    ));
-                    // Add Explosion (Muzzle Flash) - TEMA 2 4th Derived Class Usage
-                    objects.push_back(std::unique_ptr<GameObject>(
-                        new Explosion(startP, renderer)
-                    ));
-                    break; 
-                }
+                objects.push_back(std::unique_ptr<GameObject>(
+                    new Projectile(startP, endP, 10.0f, renderer)
+                ));
+                // Add Explosion (Muzzle Flash)
+                objects.push_back(std::unique_ptr<GameObject>(
+                    new Explosion(startP, renderer)
+                ));
             }
         }
         frameCount = 0;

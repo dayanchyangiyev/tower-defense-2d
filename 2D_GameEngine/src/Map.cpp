@@ -18,7 +18,7 @@ Map::Map(SDL_Renderer* ren) {
         water = TextureManager::LoadTexture("assets/water.png", ren);
     } catch (const ResourceError& e) {
         // Optional texture
-        Logger::log("Warning: Water texture missing. Proceeding without it.");
+        Logger::getInstance().log("Warning: Water texture missing. Proceeding without it.");
         water = nullptr;
     }
     
@@ -35,11 +35,7 @@ Map::~Map() {
 }
 
 void Map::LoadMap(int arr[20][25]) {
-    for (int row = 0; row < 20; row++) {
-        for (int col = 0; col < 25; col++) {
-            map[row][col] = arr[row][col];
-        }
-    }
+    map.loadFromRaw(arr);
 }
 
 void Map::DrawMap() {
@@ -47,7 +43,7 @@ void Map::DrawMap() {
     
     for (int row = 0; row < 20; row++) {
         for (int col = 0; col < 25; col++) {
-            type = map[row][col];
+            type = map.get(row, col);
             
             dest.x = col * 32;
             dest.y = row * 32;

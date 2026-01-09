@@ -4,17 +4,29 @@ Renderer created!
 Warning: Water texture missing. Proceeding without it.
 Game Started!
 Prep Phase: 9s remaining. Place towers!
-Placed tower at grid (12, 7)
+Placed tower at grid (12, 5)
 Prep Phase: 8s remaining. Place towers!
-Placed tower at grid (9, 7)
 Prep Phase: 7s remaining. Place towers!
+Placed tower at grid (5, 5)
 Prep Phase: 6s remaining. Place towers!
-Placed tower at grid (11, 5)
 Prep Phase: 5s remaining. Place towers!
+Placed tower at grid (9, 8)
 Prep Phase: 4s remaining. Place towers!
 Prep Phase: 3s remaining. Place towers!
 Prep Phase: 2s remaining. Place towers!
 Prep Phase: 1s remaining. Place towers!
+Resource Error: Failed to load texture: assets/projectile.png
+Resource Error: Failed to load texture: assets/explosion.bmp
+Enemy Goblin defeated!
+Resource Error: Failed to load texture: assets/projectile.png
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/projectile.png
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/projectile.png
+Resource Error: Failed to load texture: assets/explosion.bmp
+Resource Error: Failed to load texture: assets/projectile.png
+Resource Error: Failed to load texture: assets/explosion.bmp
+Enemy Orc defeated!
 Resource Error: Failed to load texture: assets/projectile.png
 Resource Error: Failed to load texture: assets/explosion.bmp
 Enemy Goblin defeated!

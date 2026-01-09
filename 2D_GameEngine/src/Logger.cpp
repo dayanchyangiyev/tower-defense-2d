@@ -1,7 +1,5 @@
 #include "Logger.hpp"
 
-std::ofstream Logger::logFile;
-
 void Logger::init(const std::string& filename) {
     if (logFile.is_open()) {
         logFile.close();
@@ -16,8 +14,9 @@ void Logger::init(const std::string& filename) {
 void Logger::log(const std::string& message) {
     if (logFile.is_open()) {
         logFile << message << std::endl;
+    } else {
+        std::cout << "[Console Fallback]: " << message << std::endl;
     }
-    
 }
 
 void Logger::close() {

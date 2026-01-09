@@ -37,8 +37,8 @@ GameObject::GameObject(const char* textureSheet, SDL_Renderer* ren, float x, flo
         try {
             objTexture = TextureManager::LoadTexture(textureSheet, ren);
         } catch (const ResourceError& e) {
-            Logger::log(e.what());
-            // Fallback or rethrow? 
+            Logger::getInstance().log(e.what());
+            // Fallback or rethrow?  
             // We can continue with null texture (invisible object) but log it.
             objTexture = nullptr; 
         }
@@ -171,7 +171,7 @@ void Enemy::render() {
 }
 
 void Enemy::onClick() {
-    Logger::log("Clicked on Enemy: " + name);
+    Logger::getInstance().log("Clicked on Enemy: " + name);
 }
 
 void Enemy::setTarget(float x, float y) {
@@ -183,7 +183,7 @@ void Enemy::takeDamage(int amount) {
     health -= amount;
     if (health <= 0) {
         health = 0; active = false;
-        Logger::log("Enemy " + name + " defeated!");
+        Logger::getInstance().log("Enemy " + name + " defeated!");
     }
 }
 
@@ -220,7 +220,7 @@ void Tower::takeDamage(int amount) {
 void Tower::upgrade() {
     level++;
     damage += 2; range += 10.0f;
-    Logger::log("Tower upgraded!");
+    Logger::getInstance().log("Tower upgraded!");
 }
 
 bool Tower::canAttack(const Enemy& enemy) const {

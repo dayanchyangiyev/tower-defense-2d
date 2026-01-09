@@ -5,7 +5,7 @@
 Game *game = nullptr;
 
 int main() {
-    Logger::init("game_log.txt");
+    Logger::getInstance().init("game_log.txt");
     
     // const int FPS = 30; // Defined in Game loop usually or managed here
     const int FPS = 30;
@@ -31,14 +31,14 @@ int main() {
             }                                         
         }
     } catch (const GameException& e) {
-        Logger::log(std::string("CRITICAL EXCEPTION: ") + e.what());
+        Logger::getInstance().log(std::string("CRITICAL EXCEPTION: ") + e.what());
         std::cerr << "Game Crash: " << e.what() << std::endl;
         return -1;
     } catch (const std::exception& e) {
-        Logger::log(std::string("STD EXCEPTION: ") + e.what());
+        Logger::getInstance().log(std::string("STD EXCEPTION: ") + e.what());
         return -1;
     } catch (...) {
-        Logger::log("UNKNOWN EXCEPTION");
+        Logger::getInstance().log("UNKNOWN EXCEPTION");
         return -1;
     }
 

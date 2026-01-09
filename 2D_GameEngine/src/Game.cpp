@@ -22,12 +22,12 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
     }
     if(SDL_Init(SDL_INIT_VIDEO))
     {
-        Logger::log("Subsystem Initialised!...");
+        Logger::getInstance().log("Subsystem Initialised!...");
 
         window = SDL_CreateWindow(title, width, height, static_cast<SDL_WindowFlags>(flags)); 
         if(window)
         {
-            Logger::log("window created!");
+            Logger::getInstance().log("window created!");
             SDL_SetWindowPosition(window, xpos, ypos);
         }
 
@@ -35,7 +35,7 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
         if(renderer)
         {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-            Logger::log("Renderer created!");
+            Logger::getInstance().log("Renderer created!");
         }
         isRunning = true;
 
@@ -86,7 +86,7 @@ void Game::handleEvents()
                 if (mx >= startRect.x && mx <= startRect.x + startRect.w &&
                     my >= startRect.y && my <= startRect.y + startRect.h) {
                     gameState = PLAYING;
-                    Logger::log("Game Started!");
+                    Logger::getInstance().log("Game Started!");
                 }
                 
                 // Check Quit
@@ -147,7 +147,7 @@ void Game::clean()
     renderer = nullptr;
     isRunning = false;
     SDL_Quit();
-    Logger::log("Game cleaned");
+    Logger::getInstance().log("Game cleaned");
 
 }
 

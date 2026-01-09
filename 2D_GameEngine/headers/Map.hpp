@@ -2,6 +2,7 @@
 #define Map_hpp
 
 #include "Game.hpp"
+#include "Matrix2D.hpp"
 
 class Map {
 public:
@@ -17,7 +18,7 @@ private:
     SDL_Texture* grass;
     SDL_Texture* water;
     
-    int map[20][25];
+    Matrix2D<int, 20, 25> map;
     SDL_Renderer* renderer;
 };
 
