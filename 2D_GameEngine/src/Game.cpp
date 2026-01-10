@@ -6,6 +6,7 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+#include <cstdio>
 
 Game::Game() : isRunning(false), window(nullptr), renderer(nullptr), gameState(MENU), menuBg(nullptr), btnStart(nullptr), btnQuit(nullptr), btnManual(nullptr), startRect{0,0,0,0}, quitRect{0,0,0,0}, manualRect{0,0,0,0}, level(nullptr)
 {}
@@ -63,12 +64,7 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
     mapMatrix.fill(0); // Fill with Grass (0)
     for(int c=0; c<25; c++) mapMatrix.set(10, c, 1); // Set Path (1)
 
-    // Load into Level (we might need to adapt Level::loadMap to take Matrix2D or just extract raw?)
-    // Level::loadMap takes int arr[20][25]. We can't pass Matrix2D directly unless we overload or expose raw.
-    // For now, let's just allow the unused 'fill'/'set' to simply BE USED here locally, 
-    // effectively proving they work, even if we convert back to array or use existing logic.
-    // Actually, let's update Level to take a Matrix2D?
-    // Or just use them:
+    
     int mapArr[20][25];
     for(int r=0; r<20; r++)
         for(int c=0; c<25; c++)
@@ -77,7 +73,11 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
     level->loadMap(mapArr);
     
     // Use getCount
-    Logger::getInstance().log("Total GameObjects: " + std::to_string(GameObject::getCount()));
+    {
+        char message[64];
+        std::snprintf(message, sizeof(message), "Total GameObjects: %d", GameObject::getCount());
+        Logger::getInstance().log(message);
+    }
     
     gameState = MENU;
 }
@@ -85,68 +85,68 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
 void Game::handleEvents()
 {
     SDL_Event event;
-    SDL_PollEvent(&event); 
-    switch (event.type) {
-        case SDL_EVENT_QUIT:
-            isRunning = false;
-            break;
-        case SDL_EVENT_MOUSE_BUTTON_DOWN: {
-            float mx = event.button.x;
-            float my = event.button.y;
-            
-            if (gameState == MENU) {
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
+            case SDL_EVENT_QUIT:
+                isRunning = false;
+                break;
+            case SDL_EVENT_MOUSE_BUTTON_DOWN: {
+                float mx = event.button.x;
+                float my = event.button.y;
                 
-                // Check Start
-                if (mx >= startRect.x && mx <= startRect.x + startRect.w &&
-                    my >= startRect.y && my <= startRect.y + startRect.h) {
-                    gameState = PLAYING;
-                    Logger::getInstance().log("Game Started!");
-                }
-                
-                // Check Manual
-                if (mx >= manualRect.x && mx <= manualRect.x + manualRect.w &&
-                    my >= manualRect.y && my <= manualRect.y + manualRect.h) {
+                if (gameState == MENU) {
                     
-                    std::string manualContent = "Could not load manual.txt";
-                    std::ifstream manualFile("assets/manual.txt");
-                    if (manualFile.is_open()) {
-                        std::stringstream buffer;
-                        buffer << manualFile.rdbuf();
-                        manualContent = buffer.str();
-                        manualFile.close();
-                    } else {
-                        Logger::getInstance().log("Failed to load assets/manual.txt");
+                    // Check Start
+                    if (mx >= startRect.x && mx <= startRect.x + startRect.w &&
+                        my >= startRect.y && my <= startRect.y + startRect.h) {
+                        gameState = PLAYING;
+                        Logger::getInstance().log("Game Started!");
                     }
+                    
+                    // Check Manual
+                    if (mx >= manualRect.x && mx <= manualRect.x + manualRect.w &&
+                        my >= manualRect.y && my <= manualRect.y + manualRect.h) {
                         
-                    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Game Manual", manualContent.c_str(), window);
-                    Logger::getInstance().log("Manual Opened.");
+                        std::string manualContent = "Could not load manual.txt";
+                        std::ifstream manualFile("assets/manual.txt");
+                        if (manualFile.is_open()) {
+                            std::stringstream buffer;
+                            buffer << manualFile.rdbuf();
+                            manualContent = buffer.str();
+                            manualFile.close();
+                        } else {
+                            Logger::getInstance().log("Failed to load assets/manual.txt");
+                        }
+                            
+                        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Game Manual", manualContent.c_str(), window);
+                        Logger::getInstance().log("Manual Opened.");
+                    }
+                    
+                    // Check Quit
+                    if (mx >= quitRect.x && mx <= quitRect.x + quitRect.w &&
+                        my >= quitRect.y && my <= quitRect.y + quitRect.h) {
+                        isRunning = false;
+                    }
+                } else if (gameState == PLAYING && level) {
+                     // Pass click to Level
+                     level->handleMouseClick((int)mx, (int)my);
                 }
-                
-                // Check Quit
-                if (mx >= quitRect.x && mx <= quitRect.x + quitRect.w &&
-                    my >= quitRect.y && my <= quitRect.y + quitRect.h) {
-                    isRunning = false;
-                }
-            } else if (gameState == PLAYING && level) {
-                 // Pass click to Level
-                 level->handleMouseClick((int)mx, (int)my);
             }
+                break;
+            case SDL_EVENT_KEY_DOWN:
+                if (gameState == PLAYING) {
+                    if (event.key.key == SDLK_ESCAPE) {
+                        gameState = MENU;
+                    } else {
+                        // Pass other keys to Level
+                        if (level) level->handleInput(event.key.key);
+                    }
+                }
+                break;
+            default:
+                break;
         }
-            break;
-        case SDL_EVENT_KEY_DOWN:
-            if (gameState == PLAYING) {
-                if (event.key.key == SDLK_ESCAPE) {
-                    gameState = MENU;
-                } else {
-                    // Pass other keys to Level
-                    if (level) level->handleInput(event.key.key);
-                }
-            }
-            break;
-        default:
-            break;
     }
-
 }
 void Game::update()
 {

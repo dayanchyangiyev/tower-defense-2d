@@ -172,7 +172,8 @@ void Level::update() {
         
         if (spawnTimer >= 150) {
             int side = rand() % 4;
-            int sx, sy;
+            int sx = 0;
+            int sy = 0;
             switch(side) {
                 case 0: sx = rand() % 800; sy = 0; break; 
                 case 1: sx = rand() % 800; sy = 600; break; 
@@ -259,7 +260,11 @@ void Level::update() {
                 
                 // Use Utils::MathUtils::angleBetween (log it)
                 double angle = Utils::MathUtils::angleBetween(lx, ly, endP.getX(), endP.getY());
-                Logger::getInstance().log("Shot angle: " + std::to_string(angle));
+                {
+                    std::string message("Shot angle: ");
+                    message += std::to_string(angle);
+                    Logger::getInstance().log(message);
+                }
 
                 objects.push_back(std::unique_ptr<GameObject>(
                     new Projectile(lerpStart, endP, 10.0f, renderer, tower->getProjectileColor())
@@ -316,5 +321,3 @@ void Level::renderCursor() {
     SDL_RenderFillRect(renderer, &r);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
-
-

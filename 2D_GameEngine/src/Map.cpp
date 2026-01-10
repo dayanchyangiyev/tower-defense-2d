@@ -9,14 +9,13 @@ Map::Map(SDL_Renderer* ren) {
     try {
         grass = TextureManager::LoadTexture("assets/map_tile.bmp", ren);
         dirt = TextureManager::LoadTexture("assets/path_tile.bmp", ren);
-    } catch (const ResourceError& e) {
-        
-        throw; 
+    } catch (const ResourceError&) {
+        throw;
     }
     
     try {
         water = TextureManager::LoadTexture("assets/water.png", ren);
-    } catch (const ResourceError& e) {
+    } catch (const ResourceError&) {
         // Optional texture
         Logger::getInstance().log("Warning: Water texture missing. Proceeding without it.");
         water = nullptr;

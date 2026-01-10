@@ -1,8 +1,7 @@
 #ifndef Logger_hpp
 #define Logger_hpp
 
-#include <iostream>
-#include <fstream>
+#include <cstdio>
 #include <string>
 
 class Logger {
@@ -17,14 +16,16 @@ public:
     }
 
     void init(const std::string& filename);
+    void init(const char* filename);
     void log(const std::string& message);
+    void log(const char* message);
     void close();
 
 private:
-    Logger() = default;
+    Logger() : logFile(nullptr) {}
     ~Logger() { close(); }
     
-    std::ofstream logFile;
+    std::FILE* logFile;
 };
 
 #endif /* Logger_hpp */

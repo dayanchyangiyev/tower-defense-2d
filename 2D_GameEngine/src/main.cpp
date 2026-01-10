@@ -42,11 +42,15 @@ int main() {
 #endif
         }
     } catch (const GameException& e) {
-        Logger::getInstance().log(std::string("CRITICAL EXCEPTION: ") + e.what());
+        std::string message("CRITICAL EXCEPTION: ");
+        message += e.what();
+        Logger::getInstance().log(message);
         std::cerr << "Game Crash: " << e.what() << std::endl;
         return -1;
     } catch (const std::exception& e) {
-        Logger::getInstance().log(std::string("STD EXCEPTION: ") + e.what());
+        std::string message("STD EXCEPTION: ");
+        message += e.what();
+        Logger::getInstance().log(message);
         return -1;
     } catch (...) {
         Logger::getInstance().log("UNKNOWN EXCEPTION");

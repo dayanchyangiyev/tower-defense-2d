@@ -214,7 +214,9 @@ void Enemy::render() {
 }
 
 void Enemy::onClick() {
-    Logger::getInstance().log("Clicked on Enemy: " + name);
+    std::string message("Clicked on Enemy: ");
+    message += name;
+    Logger::getInstance().log(message);
 }
 
 void Enemy::setTarget(float x, float y) {
@@ -227,7 +229,10 @@ void Enemy::takeDamage(int amount) {
     if (health <= 0) {
         health = 0; 
         setActive(false); // Use setActive
-        Logger::getInstance().log("Enemy " + name + " defeated!");
+        std::string message("Enemy ");
+        message += name;
+        message += " defeated!";
+        Logger::getInstance().log(message);
     }
 }
 
@@ -272,7 +277,11 @@ void Tower::upgrade() {
     level++;
     damage += 5;
     range += 20.0f;
-    Logger::getInstance().log("Tower upgraded! Damage: " + std::to_string(getDamage()));
+    {
+        std::string message("Tower upgraded! Damage: ");
+        message += std::to_string(getDamage());
+        Logger::getInstance().log(message);
+    }
 }
 
 bool Tower::canAttack(const Enemy& enemy) const {
