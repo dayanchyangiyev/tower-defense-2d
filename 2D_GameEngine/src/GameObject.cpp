@@ -7,6 +7,7 @@
 
 int GameObject::objectCount = 0;
 
+// cppcheck-suppress unusedFunction
 int GameObject::getCount() {
     return objectCount;
 }

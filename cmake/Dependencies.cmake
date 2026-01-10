@@ -20,8 +20,15 @@ function(setup_sdl_dependencies target_name)
             set(SDL_X11_XSHAPE OFF CACHE BOOL "Disable XShape" FORCE)
             set(SDL_X11_XFIXES OFF CACHE BOOL "Disable XFixes" FORCE)
             set(SDL_X11_XTEST OFF CACHE BOOL "Disable XTest" FORCE)
+            set(SDL_X11_XTEST OFF CACHE BOOL "Disable XTest" FORCE)
             set(SDL_X11_XKB OFF CACHE BOOL "Disable XKB" FORCE)
         endif()
+
+        # Disable complex image formats that require external heavy dependencies (like dav1d/NASM)
+        set(SDL3IMAGE_AVIF OFF CACHE BOOL "Disable AVIF" FORCE)
+        set(SDL3IMAGE_WEBP OFF CACHE BOOL "Disable WEBP" FORCE)
+        set(SDL3IMAGE_JXL  OFF CACHE BOOL "Disable JXL" FORCE)
+        set(SDL3IMAGE_TIF  OFF CACHE BOOL "Disable TIFF" FORCE)
 
         FetchContent_Declare(
             SDL3
