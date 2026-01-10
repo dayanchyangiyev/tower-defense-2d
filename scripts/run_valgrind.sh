@@ -3,7 +3,7 @@
 INPUT_FILE=${INPUT_FILE:-tastatura.txt}
 RUN_INTERACTIVE=${RUN_INTERACTIVE:-false}
 BUILD_DIR=${BUILD_DIR:-build}
-EXECUTABLE_NAME=${EXECUTABLE_NAME:-simple_game}
+EXECUTABLE_NAME=${EXECUTABLE_NAME:-tower-defense-2d}
 
 if [[ -n "$1" ]]; then
     BIN_DIR="$1"

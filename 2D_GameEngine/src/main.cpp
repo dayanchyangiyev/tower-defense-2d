@@ -16,7 +16,12 @@ int main() {
     try {
         game = new Game();
         game->init("Game Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, false);
-        
+
+#ifdef GITHUB_ACTIONS
+        const Uint32 maxRuntimeMs = 2000;
+        const Uint32 startTicks = SDL_GetTicks();
+#endif
+
         while (game->running()){
             Uint32 frameStart = SDL_GetTicks(); 
             game->handleEvents();
@@ -28,6 +33,13 @@ int main() {
             { 
                 SDL_Delay(frameDelay - frameTime);
             }                                         
+
+#ifdef GITHUB_ACTIONS
+            if (SDL_GetTicks() - startTicks > maxRuntimeMs) {
+                Logger::getInstance().log("CI time limit reached, exiting.");
+                break;
+            }
+#endif
         }
     } catch (const GameException& e) {
         Logger::getInstance().log(std::string("CRITICAL EXCEPTION: ") + e.what());

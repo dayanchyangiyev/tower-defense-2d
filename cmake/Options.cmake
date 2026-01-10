@@ -10,14 +10,26 @@ option(CMAKE_COLOR_DIAGNOSTICS "Enable color diagnostics" ON)
 # ------------------------------------------------------------------------------
 
 # 1. Disable SDL3_image complex formats (Avoids dav1d/NASM dependency on Windows)
+# SDL3_image still accepts the old SDLIMAGE_* cache keys, so set both.
 set(SDL3IMAGE_AVIF OFF CACHE BOOL "Disable AVIF" FORCE)
 set(SDL3IMAGE_AVIF OFF)
+set(SDLIMAGE_AVIF OFF CACHE BOOL "Disable AVIF (legacy key)" FORCE)
+set(SDLIMAGE_AVIF OFF)
+
 set(SDL3IMAGE_WEBP OFF CACHE BOOL "Disable WEBP" FORCE)
 set(SDL3IMAGE_WEBP OFF)
+set(SDLIMAGE_WEBP OFF CACHE BOOL "Disable WEBP (legacy key)" FORCE)
+set(SDLIMAGE_WEBP OFF)
+
 set(SDL3IMAGE_JXL  OFF CACHE BOOL "Disable JXL" FORCE)
 set(SDL3IMAGE_JXL  OFF)
+set(SDLIMAGE_JXL  OFF CACHE BOOL "Disable JXL (legacy key)" FORCE)
+set(SDLIMAGE_JXL  OFF)
+
 set(SDL3IMAGE_TIF  OFF CACHE BOOL "Disable TIFF" FORCE)
 set(SDL3IMAGE_TIF  OFF)
+set(SDLIMAGE_TIF  OFF CACHE BOOL "Disable TIFF (legacy key)" FORCE)
+set(SDLIMAGE_TIF  OFF)
 
 # 2. Disable SDL3 X11 extensions (Avoids missing headers on minimal Linux CI)
 if(UNIX AND NOT APPLE)

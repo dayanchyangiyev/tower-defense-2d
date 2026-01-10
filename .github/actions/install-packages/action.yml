@@ -10,7 +10,29 @@ runs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install ninja-build
+        sudo apt-get install ninja-build \
+          libasound2-dev \
+          libpulse-dev \
+          libdbus-1-dev \
+          libudev-dev \
+          libx11-dev \
+          libxext-dev \
+          libxrandr-dev \
+          libxrender-dev \
+          libxinerama-dev \
+          libxi-dev \
+          libxcursor-dev \
+          libxfixes-dev \
+          libxss-dev \
+          libxkbcommon-dev \
+          libwayland-dev \
+          libdrm-dev \
+          libgbm-dev \
+          libegl1-mesa-dev \
+          libgl1-mesa-dev \
+          libjpeg-dev \
+          libpng-dev \
+          zlib1g-dev
         # https://github.com/llvm/llvm-project/issues/78354
         sudo sysctl vm.mmap_rnd_bits=28
 

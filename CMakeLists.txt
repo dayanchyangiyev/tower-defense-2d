@@ -56,9 +56,42 @@ target_include_directories(${MAIN_EXECUTABLE_NAME} PRIVATE "${HEADERS_DIR}")
 setup_sdl_dependencies(${MAIN_EXECUTABLE_NAME})
 set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
 
+if(UNIX AND NOT APPLE)
+    set_target_properties(${MAIN_EXECUTABLE_NAME} PROPERTIES
+        BUILD_RPATH "$ORIGIN"
+        INSTALL_RPATH "$ORIGIN"
+    )
+endif()
+
 install(TARGETS ${MAIN_EXECUTABLE_NAME} RUNTIME DESTINATION "${DESTINATION_DIR}")
 if(APPLE)
     install(FILES launcher.command DESTINATION "${DESTINATION_DIR}")
 endif()
 
-copy_files(FILES tastatura.txt COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
+copy_files(
+    FILES tastatura.txt
+    DIRECTORY assets
+    COPY_TO_DESTINATION
+    TARGET_NAME ${MAIN_EXECUTABLE_NAME}
+)
+
+if(NOT APPLE)
+    foreach(dep SDL3::SDL3 SDL3_image::SDL3_image)
+        if(TARGET ${dep})
+            get_target_property(dep_imported ${dep} IMPORTED)
+            if(NOT dep_imported)
+                get_target_property(dep_alias ${dep} ALIASED_TARGET)
+                if(dep_alias)
+                    set(dep_target ${dep_alias})
+                else()
+                    set(dep_target ${dep})
+                endif()
+                install(TARGETS ${dep_target}
+                    RUNTIME DESTINATION "${DESTINATION_DIR}"
+                    LIBRARY DESTINATION "${DESTINATION_DIR}"
+                    ARCHIVE DESTINATION "${DESTINATION_DIR}"
+                )
+            endif()
+        endif()
+    endforeach()
+endif()

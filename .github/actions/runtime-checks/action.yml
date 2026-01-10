@@ -51,7 +51,15 @@ runs:
       # env:
       #   ASAN_OPTIONS: detect_leaks=1
       run: |
-        cat "${INPUT_FILENAME}" | tr -d '\r' | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
+        if [[ "${RUNNER_OS}" == "Linux" ]]; then
+          export SDL_VIDEODRIVER=dummy
+          export SDL_RENDER_DRIVER=software
+          export SDL_AUDIODRIVER=dummy
+        fi
+
+        pushd "${{ env.ZIP_NAME }}"
+        cat "${INPUT_FILENAME}" | tr -d '\r' | "./${EXECUTABLE_NAME}"
+        popd
 
     - name: Sanitizers (Windows MSVC)
       shell: bash
@@ -59,10 +67,17 @@ runs:
       if: matrix.cxx == 'cl' && matrix.runs_asan == true
       continue-on-error: true
       run: |
-        cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe
+        pushd "${{ env.ZIP_NAME }}"
+        cat "${INPUT_FILENAME}" | "./${EXECUTABLE_NAME}".exe
+        popd
 
     - name: Valgrind
       shell: bash
       if: runner.os == 'Linux' && matrix.runs_valgrind == true
       run: |
-        bash ./scripts/run_valgrind.sh "${{ env.ZIP_NAME }}"
+        export SDL_VIDEODRIVER=dummy
+        export SDL_RENDER_DRIVER=software
+        export SDL_AUDIODRIVER=dummy
+        pushd "${{ env.ZIP_NAME }}"
+        bash ../scripts/run_valgrind.sh .
+        popd
