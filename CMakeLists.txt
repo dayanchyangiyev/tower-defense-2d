@@ -5,6 +5,26 @@ set(MAIN_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}")
 
 project(${MAIN_PROJECT_NAME} LANGUAGES CXX)
 
+if(APPLE)
+    # GCC on macOS does not support -fobjc-arc, which SDL3 requires.
+    # If the user is using GCC, we must still use Clang for Objective-C files.
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+        # Find the absolute path to clang to avoid "not a full path" errors
+        find_program(CLANG_COMPILER clang PATHS /usr/bin /usr/local/bin)
+        if(CLANG_COMPILER)
+             set(CMAKE_OBJC_COMPILER "${CLANG_COMPILER}")
+        else()
+             message(WARNING "GCC detected on macOS but Clang (for OBJC) not found! SDL3 build may fail.")
+             set(CMAKE_OBJC_COMPILER "clang") 
+        endif()
+    endif()
+    enable_language(OBJC)
+endif()
+
+
+
+
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 include(Options)
@@ -38,12 +58,6 @@ set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
 
 install(TARGETS ${MAIN_EXECUTABLE_NAME} RUNTIME DESTINATION "${DESTINATION_DIR}")
 if(APPLE)
-    # GCC on macOS does not support -fobjc-arc, which SDL3 requires.
-    # If the user is using GCC, we must still use Clang for Objective-C files.
-    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-        set(CMAKE_OBJC_COMPILER "clang")
-    endif()
-    enable_language(OBJC)
     install(FILES launcher.command DESTINATION "${DESTINATION_DIR}")
 endif()
 

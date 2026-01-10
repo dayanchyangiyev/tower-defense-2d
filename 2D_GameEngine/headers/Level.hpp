@@ -14,7 +14,6 @@
 class Level {
 public:
     Level(SDL_Renderer* ren, int wave);
-    Level(SDL_Renderer* ren, int wave);
     ~Level(); // Manage map
     
     // Disable copy/move due to managed resources

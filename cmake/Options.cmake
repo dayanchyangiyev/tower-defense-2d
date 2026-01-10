@@ -5,6 +5,42 @@ option(USE_ASAN "Use Address Sanitizer" OFF)
 option(USE_MSAN "Use Memory Sanitizer" OFF)
 option(CMAKE_COLOR_DIAGNOSTICS "Enable color diagnostics" ON)
 
+# ------------------------------------------------------------------------------
+# Dependency Configuration (Must be set GLOBAL SCOPE before FetchContent)
+# ------------------------------------------------------------------------------
+
+# 1. Disable SDL3_image complex formats (Avoids dav1d/NASM dependency on Windows)
+set(SDL3IMAGE_AVIF OFF CACHE BOOL "Disable AVIF" FORCE)
+set(SDL3IMAGE_AVIF OFF)
+set(SDL3IMAGE_WEBP OFF CACHE BOOL "Disable WEBP" FORCE)
+set(SDL3IMAGE_WEBP OFF)
+set(SDL3IMAGE_JXL  OFF CACHE BOOL "Disable JXL" FORCE)
+set(SDL3IMAGE_JXL  OFF)
+set(SDL3IMAGE_TIF  OFF CACHE BOOL "Disable TIFF" FORCE)
+set(SDL3IMAGE_TIF  OFF)
+
+# 2. Disable SDL3 X11 extensions (Avoids missing headers on minimal Linux CI)
+if(UNIX AND NOT APPLE)
+    set(SDL_X11_XCURSOR OFF CACHE BOOL "Disable Xcursor" FORCE)
+    set(SDL_X11_XCURSOR OFF)
+    set(SDL_X11_XINPUT OFF CACHE BOOL "Disable XInput" FORCE)
+    set(SDL_X11_XINPUT OFF)
+    set(SDL_X11_XRANDR OFF CACHE BOOL "Disable XRandR" FORCE)
+    set(SDL_X11_XRANDR OFF)
+    set(SDL_X11_XSCRNSAVER OFF CACHE BOOL "Disable XScrnSaver" FORCE)
+    set(SDL_X11_XSCRNSAVER OFF)
+    set(SDL_X11_XSHAPE OFF CACHE BOOL "Disable XShape" FORCE)
+    set(SDL_X11_XSHAPE OFF)
+    set(SDL_X11_XFIXES OFF CACHE BOOL "Disable XFixes" FORCE)
+    set(SDL_X11_XFIXES OFF)
+    set(SDL_X11_XTEST OFF CACHE BOOL "Disable XTest" FORCE)
+    set(SDL_X11_XTEST OFF)
+    set(SDL_X11_XKB OFF CACHE BOOL "Disable XKB" FORCE)
+    set(SDL_X11_XKB OFF)
+endif()
+
+# ------------------------------------------------------------------------------
+
 # update name in .github/workflows/cmake.yml:27 when changing "bin" name here
 set(DESTINATION_DIR "bin")
 

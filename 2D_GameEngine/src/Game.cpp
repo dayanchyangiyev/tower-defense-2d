@@ -7,7 +7,7 @@
 #include <fstream>
 #include <string>
 
-Game::Game() : isRunning(false), window(nullptr), renderer(nullptr), gameState(MENU), menuBg(nullptr), btnStart(nullptr), btnQuit(nullptr), btnManual(nullptr), startRect{0,0,0,0}, manualRect{0,0,0,0}, quitRect{0,0,0,0}, level(nullptr)
+Game::Game() : isRunning(false), window(nullptr), renderer(nullptr), gameState(MENU), menuBg(nullptr), btnStart(nullptr), btnQuit(nullptr), btnManual(nullptr), startRect{0,0,0,0}, quitRect{0,0,0,0}, manualRect{0,0,0,0}, level(nullptr)
 {}
 
 Game::~Game()

@@ -12,7 +12,6 @@ class Game {
 
 public:
     Game();
-    Game();
     ~Game();
 
     // Disable copy/move
