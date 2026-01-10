@@ -19,6 +19,8 @@ function(setup_sdl_dependencies target_name)
             set(SDL_X11_XSCRNSAVER OFF CACHE BOOL "Disable XScrnSaver" FORCE)
             set(SDL_X11_XSHAPE OFF CACHE BOOL "Disable XShape" FORCE)
             set(SDL_X11_XFIXES OFF CACHE BOOL "Disable XFixes" FORCE)
+            set(SDL_X11_XTEST OFF CACHE BOOL "Disable XTest" FORCE)
+            set(SDL_X11_XKB OFF CACHE BOOL "Disable XKB" FORCE)
         endif()
 
         FetchContent_Declare(
