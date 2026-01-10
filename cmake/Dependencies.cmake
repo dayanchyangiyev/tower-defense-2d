@@ -10,6 +10,17 @@ function(setup_sdl_dependencies target_name)
     # 2. If not found, download and build via FetchContent
     if(NOT SDL3_FOUND)
         message(STATUS "SDL3 not found. Fetching from GitHub...")
+        
+        # Disable optional X11 dependencies that are missing in minimal CI environments
+        if(UNIX AND NOT APPLE)
+            set(SDL_X11_XCURSOR OFF CACHE BOOL "Disable Xcursor" FORCE)
+            set(SDL_X11_XINPUT OFF CACHE BOOL "Disable XInput" FORCE)
+            set(SDL_X11_XRANDR OFF CACHE BOOL "Disable XRandR" FORCE)
+            set(SDL_X11_XSCRNSAVER OFF CACHE BOOL "Disable XScrnSaver" FORCE)
+            set(SDL_X11_XSHAPE OFF CACHE BOOL "Disable XShape" FORCE)
+            set(SDL_X11_XFIXES OFF CACHE BOOL "Disable XFixes" FORCE)
+        endif()
+
         FetchContent_Declare(
             SDL3
             GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
