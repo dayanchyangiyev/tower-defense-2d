@@ -103,10 +103,8 @@ public:
     float getX() const { return xPos; }
     float getY() const { return yPos; }
     Point2D getPos() const { return Point2D(xPos, yPos); }
-    // cppcheck-suppress unusedFunction
     void setPos(float x, float y) { xPos = x; yPos = y; }
     bool isActive() const { return active; }
-    // cppcheck-suppress unusedFunction
     void setActive(bool a) { active = a; }
     
     // Static member for teacher requirement
@@ -217,7 +215,6 @@ public:
     virtual void attack(Enemy& enemy);
     void upgrade();
     bool canAttack(const Enemy& enemy) const;
-    // cppcheck-suppress unusedFunction
     int getDamage() const { return damage; }
     float getRange() const { return range; }
     

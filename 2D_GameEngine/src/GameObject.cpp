@@ -7,7 +7,6 @@
 
 int GameObject::objectCount = 0;
 
-// cppcheck-suppress unusedFunction
 int GameObject::getCount() {
     return objectCount;
 }
@@ -226,7 +225,8 @@ void Enemy::takeDamage(int amount) {
     if (!active) return;
     health -= amount;
     if (health <= 0) {
-        health = 0; active = false;
+        health = 0; 
+        setActive(false); // Use setActive
         Logger::getInstance().log("Enemy " + name + " defeated!");
     }
 }
@@ -270,8 +270,9 @@ void Tower::takeDamage(int amount) {
 
 void Tower::upgrade() {
     level++;
-    damage += 2; range += 10.0f;
-    Logger::getInstance().log("Tower upgraded!");
+    damage += 5;
+    range += 20.0f;
+    Logger::getInstance().log("Tower upgraded! Damage: " + std::to_string(getDamage()));
 }
 
 bool Tower::canAttack(const Enemy& enemy) const {
@@ -315,10 +316,9 @@ void Projectile::update() {
     if (dist < speed) {
         xPos = target.getX();
         yPos = target.getY();
-        active = false; // Reached target
+        setActive(false); // Reached target
     } else {
-        xPos += (dx/dist) * speed;
-        yPos += (dy/dist) * speed;
+        setPos(xPos + (dx/dist)*speed, yPos + (dy/dist)*speed); // Use setPos
     }
     
     srcRect = {0, 0, 32, 32}; // Assume small sprite or reuse

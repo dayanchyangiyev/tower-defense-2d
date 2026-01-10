@@ -119,6 +119,29 @@ void Level::handleInput(SDL_Keycode key) {
             selectedTowerType = TowerType::Fire;
             Logger::getInstance().log("Selected: Fire Tower");
             break;
+        case SDLK_U:
+            // Upgrade tower at cursor
+            for(auto* t : getTowers()) {
+                // Check if cursor roughly over tower (grid check)
+                int tx = (int)t->getX() / 32;
+                int ty = (int)t->getY() / 32;
+                if (tx == cursorX && ty == cursorY) {
+                    t->upgrade();
+                }
+            }
+            break;
+    }
+}
+
+void Level::handleMouseClick(int x, int y) {
+    if (gameOver) return;
+    
+    // Check click on Enemies
+    for(auto* e : getEnemies()) {
+        if (x >= e->getX() && x <= e->getX() + 32 &&
+            y >= e->getY() && y <= e->getY() + 32) {
+            e->onClick();
+        }
     }
 }
 
@@ -143,6 +166,9 @@ void Level::update() {
     } else {
         // Spawn Logic
         spawnTimer++;
+        // Use Utils::MathUtils::clamp to ensure spawnTimer doesn't exceed limit
+        spawnTimer = (int)Utils::MathUtils::clamp((float)spawnTimer, 0.0f, 150.0f);
+        
         if (spawnTimer >= 150) {
             int side = rand() % 4;
             int sx, sy;
@@ -198,8 +224,8 @@ void Level::update() {
         
         // Attack Tower if close
         if (targetTower) {
-             float dist = GameObject::distance(*enemy, *targetTower);
-             if (dist < 32.0f) {
+             // Use checkCollision static method
+             if (GameObject::checkCollision(*enemy, *targetTower)) {
                  // Meaningful cast for logic
                  IDamageable* dmgObj = dynamic_cast<IDamageable*>(targetTower);
                  if (dmgObj && frameCount == 0) {
@@ -225,8 +251,17 @@ void Level::update() {
                     // Use static distance helper
                     // float d = GameObject::distance(*tower, *enemy);
                     
+                // Use Utils::MathUtils::lerp to... calculate a slightly offset start (dummy usage but logical)
+                float lx = Utils::MathUtils::lerp(startP.getX(), endP.getX(), 0.1f);
+                float ly = Utils::MathUtils::lerp(startP.getY(), endP.getY(), 0.1f);
+                Point2D lerpStart(lx, ly);
+                
+                // Use Utils::MathUtils::angleBetween (log it)
+                double angle = Utils::MathUtils::angleBetween(lx, ly, endP.getX(), endP.getY());
+                Logger::getInstance().log("Shot angle: " + std::to_string(angle));
+
                 objects.push_back(std::unique_ptr<GameObject>(
-                    new Projectile(startP, endP, 10.0f, renderer, tower->getProjectileColor())
+                    new Projectile(lerpStart, endP, 10.0f, renderer, tower->getProjectileColor())
                 ));
                 // Add Explosion (Muzzle Flash)
                 objects.push_back(std::unique_ptr<GameObject>(

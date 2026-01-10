@@ -19,6 +19,7 @@ public:
     // User interaction
     void placeTower(int x, int y);
     void handleInput(SDL_Keycode key);
+    void handleMouseClick(int x, int y);
     void loadMap(int arr[20][25]);
     
     void update();

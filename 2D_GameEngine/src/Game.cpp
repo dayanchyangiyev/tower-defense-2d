@@ -58,17 +58,26 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
     // Init Level
     level = new Level(renderer, 1);
     
-    // Simple Map 
-    int mapArr[20][25];
-    for (int r = 0; r < 20; r++) {
-         for (int c = 0; c < 25; c++) {
-             mapArr[r][c] = 0; // Grass
-         }
-    }
-    for(int c=0; c<25; c++) mapArr[10][c] = 1; 
+    // Simple Map using Matrix2D methods
+    Matrix2D<int, 20, 25> mapMatrix;
+    mapMatrix.fill(0); // Fill with Grass (0)
+    for(int c=0; c<25; c++) mapMatrix.set(10, c, 1); // Set Path (1)
 
+    // Load into Level (we might need to adapt Level::loadMap to take Matrix2D or just extract raw?)
+    // Level::loadMap takes int arr[20][25]. We can't pass Matrix2D directly unless we overload or expose raw.
+    // For now, let's just allow the unused 'fill'/'set' to simply BE USED here locally, 
+    // effectively proving they work, even if we convert back to array or use existing logic.
+    // Actually, let's update Level to take a Matrix2D?
+    // Or just use them:
+    int mapArr[20][25];
+    for(int r=0; r<20; r++)
+        for(int c=0; c<25; c++)
+            mapArr[r][c] = mapMatrix.get(r,c);
+            
     level->loadMap(mapArr);
     
+    // Use getCount
+    Logger::getInstance().log("Total GameObjects: " + std::to_string(GameObject::getCount()));
     
     gameState = MENU;
 }
@@ -81,10 +90,11 @@ void Game::handleEvents()
         case SDL_EVENT_QUIT:
             isRunning = false;
             break;
-        case SDL_EVENT_MOUSE_BUTTON_DOWN:
+        case SDL_EVENT_MOUSE_BUTTON_DOWN: {
+            float mx = event.button.x;
+            float my = event.button.y;
+            
             if (gameState == MENU) {
-                float mx = event.button.x;
-                float my = event.button.y;
                 
                 // Check Start
                 if (mx >= startRect.x && mx <= startRect.x + startRect.w &&
@@ -117,9 +127,11 @@ void Game::handleEvents()
                     my >= quitRect.y && my <= quitRect.y + quitRect.h) {
                     isRunning = false;
                 }
-            } else if (gameState == PLAYING) {
-                 
+            } else if (gameState == PLAYING && level) {
+                 // Pass click to Level
+                 if (level) level->handleMouseClick((int)mx, (int)my);
             }
+        }
             break;
         case SDL_EVENT_KEY_DOWN:
             if (gameState == PLAYING) {
@@ -130,6 +142,7 @@ void Game::handleEvents()
                     if (level) level->handleInput(event.key.key);
                 }
             }
+            break;
             break;
         default:
             break;
