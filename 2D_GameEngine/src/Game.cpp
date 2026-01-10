@@ -7,7 +7,7 @@
 #include <fstream>
 #include <string>
 
-Game::Game() : isRunning(false), window(nullptr), renderer(nullptr), gameState(MENU), menuBg(nullptr), btnStart(nullptr), btnQuit(nullptr), btnManual(nullptr), level(nullptr)
+Game::Game() : isRunning(false), window(nullptr), renderer(nullptr), gameState(MENU), menuBg(nullptr), btnStart(nullptr), btnQuit(nullptr), btnManual(nullptr), startRect{0,0,0,0}, manualRect{0,0,0,0}, quitRect{0,0,0,0}, level(nullptr)
 {}
 
 Game::~Game()
@@ -129,7 +129,7 @@ void Game::handleEvents()
                 }
             } else if (gameState == PLAYING && level) {
                  // Pass click to Level
-                 if (level) level->handleMouseClick((int)mx, (int)my);
+                 level->handleMouseClick((int)mx, (int)my);
             }
         }
             break;
@@ -142,7 +142,6 @@ void Game::handleEvents()
                     if (level) level->handleInput(event.key.key);
                 }
             }
-            break;
             break;
         default:
             break;

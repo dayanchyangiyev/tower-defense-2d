@@ -182,7 +182,7 @@ public:
     static std::unique_ptr<Enemy> createOrc(SDL_Renderer* ren, int x, int y);
     
     // Helpers
-    std::string getName() const { return name; }
+    const std::string& getName() const { return name; }
 
 protected:
     void print(std::ostream& os) const override;

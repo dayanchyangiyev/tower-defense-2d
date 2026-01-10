@@ -6,7 +6,7 @@
 
 class Map {
 public:
-    Map(SDL_Renderer* ren);
+    explicit Map(SDL_Renderer* ren);
     ~Map();
 
     void LoadMap(int arr[20][25]); // 800x640 / 32 = 25x20

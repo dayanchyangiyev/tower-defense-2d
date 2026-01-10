@@ -39,11 +39,9 @@ void Map::LoadMap(int arr[20][25]) {
 }
 
 void Map::DrawMap() {
-    int type = 0;
-    
     for (int row = 0; row < 20; row++) {
         for (int col = 0; col < 25; col++) {
-            type = map.get(row, col);
+            int type = map.get(row, col);
             
             dest.x = col * 32;
             dest.y = row * 32;

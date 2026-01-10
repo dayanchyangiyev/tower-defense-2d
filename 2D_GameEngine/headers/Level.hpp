@@ -14,7 +14,12 @@
 class Level {
 public:
     Level(SDL_Renderer* ren, int wave);
+    Level(SDL_Renderer* ren, int wave);
     ~Level(); // Manage map
+    
+    // Disable copy/move due to managed resources
+    Level(const Level&) = delete;
+    Level& operator=(const Level&) = delete;
     
     // User interaction
     void placeTower(int x, int y);

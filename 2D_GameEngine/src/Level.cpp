@@ -62,8 +62,8 @@ void Level::placeTower(int x, int y) {
         row = y / 32;
     }
 
-    float tx = col * 32.0f;
-    float ty = row * 32.0f;
+        row = y / 32;
+    }
 
     // Logic: Only allow placement during Prep Phase
     if (gameTimerFrames >= 20 * 30) {
@@ -75,6 +75,8 @@ void Level::placeTower(int x, int y) {
         towersPlaced++;
         // Polymorphic Add: Tower
         // Use Factory with selected type
+        float tx = col * 32.0f;
+        float ty = row * 32.0f;
         auto t = TowerFactory::createTower(selectedTowerType, Point2D(tx, ty), renderer);
         objects.push_back(std::move(t));
         
