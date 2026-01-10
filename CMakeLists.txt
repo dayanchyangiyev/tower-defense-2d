@@ -38,6 +38,12 @@ set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
 
 install(TARGETS ${MAIN_EXECUTABLE_NAME} RUNTIME DESTINATION "${DESTINATION_DIR}")
 if(APPLE)
+    # GCC on macOS does not support -fobjc-arc, which SDL3 requires.
+    # If the user is using GCC, we must still use Clang for Objective-C files.
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+        set(CMAKE_OBJC_COMPILER "clang")
+    endif()
+    enable_language(OBJC)
     install(FILES launcher.command DESTINATION "${DESTINATION_DIR}")
 endif()
 

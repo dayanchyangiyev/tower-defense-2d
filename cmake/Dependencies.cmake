@@ -14,14 +14,28 @@ function(setup_sdl_dependencies target_name)
         # Disable optional X11 dependencies that are missing in minimal CI environments
         if(UNIX AND NOT APPLE)
             set(SDL_X11_XCURSOR OFF CACHE BOOL "Disable Xcursor" FORCE)
+            set(SDL_X11_XCURSOR OFF)
+
             set(SDL_X11_XINPUT OFF CACHE BOOL "Disable XInput" FORCE)
+            set(SDL_X11_XINPUT OFF)
+
             set(SDL_X11_XRANDR OFF CACHE BOOL "Disable XRandR" FORCE)
+            set(SDL_X11_XRANDR OFF)
+
             set(SDL_X11_XSCRNSAVER OFF CACHE BOOL "Disable XScrnSaver" FORCE)
+            set(SDL_X11_XSCRNSAVER OFF)
+
             set(SDL_X11_XSHAPE OFF CACHE BOOL "Disable XShape" FORCE)
+            set(SDL_X11_XSHAPE OFF)
+
             set(SDL_X11_XFIXES OFF CACHE BOOL "Disable XFixes" FORCE)
+            set(SDL_X11_XFIXES OFF)
+
             set(SDL_X11_XTEST OFF CACHE BOOL "Disable XTest" FORCE)
-            set(SDL_X11_XTEST OFF CACHE BOOL "Disable XTest" FORCE)
+            set(SDL_X11_XTEST OFF)
+
             set(SDL_X11_XKB OFF CACHE BOOL "Disable XKB" FORCE)
+            set(SDL_X11_XKB OFF)
         endif()
 
         # Disable complex image formats that require external heavy dependencies (like dav1d/NASM)
