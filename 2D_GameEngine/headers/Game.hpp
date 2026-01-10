@@ -12,7 +12,12 @@ class Game {
 
 public:
     Game();
+    Game();
     ~Game();
+
+    // Disable copy/move
+    Game(const Game&) = delete;
+    Game& operator=(const Game&) = delete;
 
     void init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen);
 

@@ -62,8 +62,7 @@ void Level::placeTower(int x, int y) {
         row = y / 32;
     }
 
-        row = y / 32;
-    }
+
 
     // Logic: Only allow placement during Prep Phase
     if (gameTimerFrames >= 20 * 30) {
