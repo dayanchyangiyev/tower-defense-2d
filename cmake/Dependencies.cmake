@@ -25,10 +25,18 @@ function(setup_sdl_dependencies target_name)
         endif()
 
         # Disable complex image formats that require external heavy dependencies (like dav1d/NASM)
+        # Using both Cache and Normal variables to ensure option() picks it up regardless of policy
         set(SDL3IMAGE_AVIF OFF CACHE BOOL "Disable AVIF" FORCE)
+        set(SDL3IMAGE_AVIF OFF)
+        
         set(SDL3IMAGE_WEBP OFF CACHE BOOL "Disable WEBP" FORCE)
+        set(SDL3IMAGE_WEBP OFF)
+        
         set(SDL3IMAGE_JXL  OFF CACHE BOOL "Disable JXL" FORCE)
+        set(SDL3IMAGE_JXL  OFF)
+        
         set(SDL3IMAGE_TIF  OFF CACHE BOOL "Disable TIFF" FORCE)
+        set(SDL3IMAGE_TIF  OFF)
 
         FetchContent_Declare(
             SDL3
